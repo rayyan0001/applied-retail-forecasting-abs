@@ -1,1 +1,1 @@
-© 2026 Rayyan Shekhani. All rights reserved.
+© 2026 Rayyan Aamir Shekhani. All rights reserved.
