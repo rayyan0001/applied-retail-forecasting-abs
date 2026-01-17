@@ -46,13 +46,34 @@ ul.task-list li input[type="checkbox"] {
   <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data"><span class="header-section-number">2</span> Data</a></li>
+  <li><a href="#exploratory-data-analaysis-eda" id="toc-exploratory-data-analaysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analaysis-eda"><span class="header-section-number">3</span> Exploratory Data Analaysis (EDA)</a>
   <ul class="collapse">
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
-  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
-  <li><a href="#exploratory-data-analaysis-eda" id="toc-exploratory-data-analaysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analaysis-eda">Exploratory Data Analaysis (EDA)</a></li>
-  <li><a href="#data-transformation-and-decomposition" id="toc-data-transformation-and-decomposition" class="nav-link" data-scroll-target="#data-transformation-and-decomposition">Data transformation and decomposition</a></li>
-  <li><a href="#models" id="toc-models" class="nav-link" data-scroll-target="#models">Models</a></li>
-  <li><a href="#evaluation" id="toc-evaluation" class="nav-link" data-scroll-target="#evaluation">Evaluation</a></li>
+  <li><a href="#trend-seasonality-and-structural-features" id="toc-trend-seasonality-and-structural-features" class="nav-link" data-scroll-target="#trend-seasonality-and-structural-features"><span class="header-section-number">3.1</span> Trend, seasonality, and structural features</a></li>
+  <li><a href="#data-transformation-and-decomposition" id="toc-data-transformation-and-decomposition" class="nav-link" data-scroll-target="#data-transformation-and-decomposition"><span class="header-section-number">3.2</span> Data transformation and decomposition</a>
+  <ul class="collapse">
+  <li><a href="#variance-stabilisation-using-the-boxcox-transformation" id="toc-variance-stabilisation-using-the-boxcox-transformation" class="nav-link" data-scroll-target="#variance-stabilisation-using-the-boxcox-transformation"><span class="header-section-number">3.2.1</span> Variance stabilisation using the Box–Cox transformation</a></li>
+  <li><a href="#seasonal-trend-decomposition-using-stl" id="toc-seasonal-trend-decomposition-using-stl" class="nav-link" data-scroll-target="#seasonal-trend-decomposition-using-stl"><span class="header-section-number">3.2.2</span> Seasonal-trend decomposition using STL</a></li>
+  <li><a href="#stationarity-and-differencing" id="toc-stationarity-and-differencing" class="nav-link" data-scroll-target="#stationarity-and-differencing"><span class="header-section-number">3.2.3</span> Stationarity and differencing</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#model-identification-and-selection" id="toc-model-identification-and-selection" class="nav-link" data-scroll-target="#model-identification-and-selection"><span class="header-section-number">4</span> Model Identification and Selection</a>
+  <ul class="collapse">
+  <li><a href="#candidate-model-specification" id="toc-candidate-model-specification" class="nav-link" data-scroll-target="#candidate-model-specification"><span class="header-section-number">4.1</span> Candidate model specification</a>
+  <ul class="collapse">
+  <li><a href="#exponential-smoothing-ets-models" id="toc-exponential-smoothing-ets-models" class="nav-link" data-scroll-target="#exponential-smoothing-ets-models"><span class="header-section-number">4.1.1</span> Exponential smoothing (ETS) models</a></li>
+  <li><a href="#arima-model-identification" id="toc-arima-model-identification" class="nav-link" data-scroll-target="#arima-model-identification"><span class="header-section-number">4.1.2</span> ARIMA model identification</a></li>
+  </ul></li>
+  <li><a href="#model-comparison-using-information-criteria" id="toc-model-comparison-using-information-criteria" class="nav-link" data-scroll-target="#model-comparison-using-information-criteria"><span class="header-section-number">4.2</span> Model comparison using information criteria</a>
+  <ul class="collapse">
+  <li><a href="#ets-model-comparison" id="toc-ets-model-comparison" class="nav-link" data-scroll-target="#ets-model-comparison"><span class="header-section-number">4.2.1</span> ETS model comparison</a></li>
+  <li><a href="#arima-model-comparison" id="toc-arima-model-comparison" class="nav-link" data-scroll-target="#arima-model-comparison"><span class="header-section-number">4.2.2</span> ARIMA model comparison</a></li>
+  </ul></li>
+  <li><a href="#test-set-evaluation-and-final-model-selection" id="toc-test-set-evaluation-and-final-model-selection" class="nav-link" data-scroll-target="#test-set-evaluation-and-final-model-selection"><span class="header-section-number">4.3</span> Test-set evaluation and final model selection</a></li>
+  </ul></li>
+  <li><a href="#evaluation" id="toc-evaluation" class="nav-link" data-scroll-target="#evaluation"><span class="header-section-number">5</span> Evaluation</a></li>
   </ul>
 </nav>
 </div>
@@ -77,36 +98,36 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="overview" class="level2">
-<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<section id="overview" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Overview</h1>
 <p>This project applies classical time series forecasting techniques to Australian retail turnover data, with a focus on furniture and household goods retailing in the Northern Territory of Australia. Using monthly data published by the Australian Bureau of Statistics, the analysis aims to understand the underlying structure of the series and assess how different forecasting approaches perform in practice.</p>
 <p>The workflow follows a standard applied forecasting process. The data are first explored to identify trends, seasonality, and structural changes, including the impact of major economic events such as COVID-19. Variance-stabilising transformations and decomposition techniques are then used to better understand the series before fitting and evaluating models.</p>
 <p>Two model families are considered: Exponential Smoothing State Space (ETS) models and Seasonal ARIMA models. Model selection is guided by a combination of information criteria, residual diagnostics, and out-of-sample performance using a 24-month test set. Forecast accuracy is further assessed by comparing model predictions to subsequently released ABS data.</p>
 <p>The goal of this project is not only to produce forecasts, but to demonstrate a transparent and defensible forecasting workflow, highlighting the trade-offs between model interpretability, stability, and responsiveness when applied to real-world economic data.</p>
 </section>
-<section id="data" class="level2">
-<h2 class="anchored" data-anchor-id="data">Data</h2>
+<section id="data" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Data</h1>
 <p>This analysis uses monthly retail turnover data from the Australian Bureau of Statistics (ABS), Retail Trade, Table 11.</p>
 <p>The series represents turnover for furniture, floor coverings, houseware and textile goods retailing in the Northern Territory of Australia, measured in millions of Australian dollars. The data span April 1988 to December 2022 and are observed at a monthly frequency. A small sample of the dataset is shown below.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="piehwtlaaa" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#piehwtlaaa table {
+<div id="uotncofiqh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#uotncofiqh table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#piehwtlaaa thead, #piehwtlaaa tbody, #piehwtlaaa tfoot, #piehwtlaaa tr, #piehwtlaaa td, #piehwtlaaa th {
+#uotncofiqh thead, #uotncofiqh tbody, #uotncofiqh tfoot, #uotncofiqh tr, #uotncofiqh td, #uotncofiqh th {
   border-style: none;
 }
 
-#piehwtlaaa p {
+#uotncofiqh p {
   margin: 0;
   padding: 0;
 }
 
-#piehwtlaaa .gt_table {
+#uotncofiqh .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -132,12 +153,12 @@ ul.task-list li input[type="checkbox"] {
   border-left-color: #D3D3D3;
 }
 
-#piehwtlaaa .gt_caption {
+#uotncofiqh .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#piehwtlaaa .gt_title {
+#uotncofiqh .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -149,7 +170,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-width: 0;
 }
 
-#piehwtlaaa .gt_subtitle {
+#uotncofiqh .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -161,7 +182,7 @@ ul.task-list li input[type="checkbox"] {
   border-top-width: 0;
 }
 
-#piehwtlaaa .gt_heading {
+#uotncofiqh .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -173,13 +194,13 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#piehwtlaaa .gt_bottom_border {
+#uotncofiqh .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#piehwtlaaa .gt_col_headings {
+#uotncofiqh .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -194,7 +215,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#piehwtlaaa .gt_col_heading {
+#uotncofiqh .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -214,7 +235,7 @@ ul.task-list li input[type="checkbox"] {
   overflow-x: hidden;
 }
 
-#piehwtlaaa .gt_column_spanner_outer {
+#uotncofiqh .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -226,15 +247,15 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 4px;
 }
 
-#piehwtlaaa .gt_column_spanner_outer:first-child {
+#uotncofiqh .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#piehwtlaaa .gt_column_spanner_outer:last-child {
+#uotncofiqh .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#piehwtlaaa .gt_column_spanner {
+#uotncofiqh .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -246,11 +267,11 @@ ul.task-list li input[type="checkbox"] {
   width: 100%;
 }
 
-#piehwtlaaa .gt_spanner_row {
+#uotncofiqh .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#piehwtlaaa .gt_group_heading {
+#uotncofiqh .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -276,7 +297,7 @@ ul.task-list li input[type="checkbox"] {
   text-align: left;
 }
 
-#piehwtlaaa .gt_empty_group_heading {
+#uotncofiqh .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -291,15 +312,15 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 
-#piehwtlaaa .gt_from_md > :first-child {
+#uotncofiqh .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#piehwtlaaa .gt_from_md > :last-child {
+#uotncofiqh .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#piehwtlaaa .gt_row {
+#uotncofiqh .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -318,7 +339,7 @@ ul.task-list li input[type="checkbox"] {
   overflow-x: hidden;
 }
 
-#piehwtlaaa .gt_stub {
+#uotncofiqh .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -331,7 +352,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#piehwtlaaa .gt_stub_row_group {
+#uotncofiqh .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -345,15 +366,15 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: top;
 }
 
-#piehwtlaaa .gt_row_group_first td {
+#uotncofiqh .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#piehwtlaaa .gt_row_group_first th {
+#uotncofiqh .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#piehwtlaaa .gt_summary_row {
+#uotncofiqh .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -363,16 +384,16 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#piehwtlaaa .gt_first_summary_row {
+#uotncofiqh .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#piehwtlaaa .gt_first_summary_row.thick {
+#uotncofiqh .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#piehwtlaaa .gt_last_summary_row {
+#uotncofiqh .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -382,7 +403,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#piehwtlaaa .gt_grand_summary_row {
+#uotncofiqh .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -392,7 +413,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#piehwtlaaa .gt_first_grand_summary_row {
+#uotncofiqh .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -402,7 +423,7 @@ ul.task-list li input[type="checkbox"] {
   border-top-color: #D3D3D3;
 }
 
-#piehwtlaaa .gt_last_grand_summary_row_top {
+#uotncofiqh .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -412,11 +433,11 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#piehwtlaaa .gt_striped {
+#uotncofiqh .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#piehwtlaaa .gt_table_body {
+#uotncofiqh .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -425,7 +446,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#piehwtlaaa .gt_footnotes {
+#uotncofiqh .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -439,7 +460,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#piehwtlaaa .gt_footnote {
+#uotncofiqh .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -448,7 +469,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#piehwtlaaa .gt_sourcenotes {
+#uotncofiqh .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -462,7 +483,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#piehwtlaaa .gt_sourcenote {
+#uotncofiqh .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -470,72 +491,72 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#piehwtlaaa .gt_left {
+#uotncofiqh .gt_left {
   text-align: left;
 }
 
-#piehwtlaaa .gt_center {
+#uotncofiqh .gt_center {
   text-align: center;
 }
 
-#piehwtlaaa .gt_right {
+#uotncofiqh .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#piehwtlaaa .gt_font_normal {
+#uotncofiqh .gt_font_normal {
   font-weight: normal;
 }
 
-#piehwtlaaa .gt_font_bold {
+#uotncofiqh .gt_font_bold {
   font-weight: bold;
 }
 
-#piehwtlaaa .gt_font_italic {
+#uotncofiqh .gt_font_italic {
   font-style: italic;
 }
 
-#piehwtlaaa .gt_super {
+#uotncofiqh .gt_super {
   font-size: 65%;
 }
 
-#piehwtlaaa .gt_footnote_marks {
+#uotncofiqh .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#piehwtlaaa .gt_asterisk {
+#uotncofiqh .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#piehwtlaaa .gt_indent_1 {
+#uotncofiqh .gt_indent_1 {
   text-indent: 5px;
 }
 
-#piehwtlaaa .gt_indent_2 {
+#uotncofiqh .gt_indent_2 {
   text-indent: 10px;
 }
 
-#piehwtlaaa .gt_indent_3 {
+#uotncofiqh .gt_indent_3 {
   text-indent: 15px;
 }
 
-#piehwtlaaa .gt_indent_4 {
+#uotncofiqh .gt_indent_4 {
   text-indent: 20px;
 }
 
-#piehwtlaaa .gt_indent_5 {
+#uotncofiqh .gt_indent_5 {
   text-indent: 25px;
 }
 
-#piehwtlaaa .katex-display {
+#uotncofiqh .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#piehwtlaaa div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#uotncofiqh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -600,13 +621,13 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </section>
-<section id="exploratory-data-analaysis-eda" class="level2">
-<h2 class="anchored" data-anchor-id="exploratory-data-analaysis-eda">Exploratory Data Analaysis (EDA)</h2>
+<section id="exploratory-data-analaysis-eda" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Exploratory Data Analaysis (EDA)</h1>
 <p>Exploratory analysis is used to understand the overall structure of the retail turnover series before any modeling is performed. This includes examining long-term trends, seasonal patterns, and changes in variability over time, as well as identifying potential structural breaks linked to broader economic conditions.</p>
 <p>A set of time series visualizations are used to assess these features. These plots help determine whether the series exhibits trend and seasonality, whether variance appears constant over time, and whether there are periods of unusually high or low volatility. Particular attention is given to changes around major events such as the mining boom period and the COVID-19 pandemic, both of which are expected to have influenced retail behaviour in the Northern Territory.</p>
 <p>The insights from this exploratory stage inform later decisions around transformation, decomposition, and model selection.</p>
-<section id="trend-seasonality-and-structural-features" class="level3">
-<h3 class="anchored" data-anchor-id="trend-seasonality-and-structural-features">Trend, seasonality, and structural features</h3>
+<section id="trend-seasonality-and-structural-features" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="trend-seasonality-and-structural-features"><span class="header-section-number">3.1</span> Trend, seasonality, and structural features</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-plot1" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
@@ -656,11 +677,11 @@ Figure&nbsp;3
 <p>The subseries plot in <a href="#fig-plot3" class="quarto-xref">Figure&nbsp;3</a> further reinforces these findings by displaying monthly behaviour across the full time span. Each month exhibits a distinct seasonal profile, while also reflecting the broader upward movement in turnover over time. June and December consistently record higher average turnover, whereas February and April remain comparatively weaker months. The horizontal reference lines representing monthly means make these differences particularly clear.</p>
 <p>One notable feature in the subseries plot is an unusually high turnover value observed in July around 2007. This may represent a genuine economic anomaly linked to exceptional conditions during that period, although the possibility of a data irregularity cannot be ruled out. Overall, the exploratory analysis confirms the presence of trend, seasonality, and changing variance, all of which are important considerations for subsequent transformation and model selection.</p>
 </section>
-</section>
-<section id="data-transformation-and-decomposition" class="level2">
-<h2 class="anchored" data-anchor-id="data-transformation-and-decomposition">Data transformation and decomposition</h2>
-<section id="variance-stabilisation-using-the-boxcox-transformation" class="level3">
-<h3 class="anchored" data-anchor-id="variance-stabilisation-using-the-boxcox-transformation">Variance stabilisation using the Box–Cox transformation</h3>
+<section id="data-transformation-and-decomposition" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="data-transformation-and-decomposition"><span class="header-section-number">3.2</span> Data transformation and decomposition</h2>
+<p>This section focuses on preparing the series for modelling by addressing changing variance and separating the underlying components of the time series. These steps help ensure that subsequent models are applied to data that are more stable and interpretable.</p>
+<section id="variance-stabilisation-using-the-boxcox-transformation" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="variance-stabilisation-using-the-boxcox-transformation"><span class="header-section-number">3.2.1</span> Variance stabilisation using the Box–Cox transformation</h3>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-plot4" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
@@ -679,12 +700,293 @@ Figure&nbsp;4
 <p>Figure <a href="#fig-plot4" class="quarto-xref">Figure&nbsp;4</a> compares the Box–Cox transformation using the Guerrero-estimated value with a log transformation, corresponding to λ = 0. Both transformations reduce variance instability relative to the original series; however, the log-transformed series exhibits slightly tighter peaks and troughs, indicating more consistent variance across seasonal periods. The estimated value being close to zero suggests that a log transformation is sufficient in practice.</p>
 <p>Overall, comparison with the original series in <a href="#fig-plot1" class="quarto-xref">Figure&nbsp;1</a> indicates that the transformation is effective in achieving approximate variance stability, making the data more suitable for subsequent decomposition and time series modelling.</p>
 </section>
+<section id="seasonal-trend-decomposition-using-stl" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="seasonal-trend-decomposition-using-stl"><span class="header-section-number">3.2.2</span> Seasonal-trend decomposition using STL</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot5" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="analysis_files/figure-html/fig-plot5-1.png" id="fig-plot5" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plot5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Following variance stabilization, the transformed series is decomposed using STL to separate the trend, seasonal, and remainder components. This helps assess whether seasonality is stable over time and whether any meaningful structure remains unexplained.</p>
+<p>Because the series spans multiple decades, STL parameters are adjusted rather than relying on defaults. The seasonal window is set to 13 to allow the seasonal component to vary smoothly while still reflecting an annual cycle, which is appropriate for monthly retail data where recurring patterns such as end-of-financial-year and holiday periods are expected. The trend window is set to 25 to capture medium-term movements (roughly two years), allowing the trend component to reflect gradual shifts associated with changing economic conditions in the Northern Territory.</p>
+<p>Given the presence of irregular spikes and sharp movements, particularly between 2007 and 2022, <code>robust = TRUE</code> is used to reduce the influence of extreme observations on the estimated components. With these settings, the decomposition in <a href="#fig-plot5" class="quarto-xref">Figure&nbsp;5</a> shows a well-defined long-term trend, a stable seasonal pattern, and a remainder that appears largely noise-like, suggesting that the major structure of the series has been captured.</p>
+<p>Overall, the STL decomposition confirms that this turnover series is characterized by a persistent long-run trend and consistent seasonal variation year to year, supporting the use of seasonal forecasting models in later sections.</p>
 </section>
-<section id="models" class="level1">
-<h1>Models</h1>
+<section id="stationarity-and-differencing" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="stationarity-and-differencing"><span class="header-section-number">3.2.3</span> Stationarity and differencing</h3>
+<div id="tbl-table1" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1
+</figcaption>
+<div aria-describedby="tbl-table1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  kpss_stat kpss_pvalue
+      &lt;dbl&gt;       &lt;dbl&gt;
+1      5.46        0.01</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<div id="tbl-table2" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2
+</figcaption>
+<div aria-describedby="tbl-table2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  nsdiffs
+    &lt;int&gt;
+1       1</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<div id="tbl-table3" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3
+</figcaption>
+<div aria-describedby="tbl-table3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  ndiffs
+   &lt;int&gt;
+1      1</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<div id="tbl-table4" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4
+</figcaption>
+<div aria-describedby="tbl-table4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  kpss_stat kpss_pvalue
+      &lt;dbl&gt;       &lt;dbl&gt;
+1    0.0340         0.1</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot6" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="analysis_files/figure-html/fig-plot6-1.png" id="fig-plot6" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plot6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot7" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="analysis_files/figure-html/fig-plot7-1.png" id="fig-plot7" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plot7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Before fitting ARIMA models, the series must be made stationary by removing any remaining trend and seasonal structure. Visual inspection of the original series in <a href="#fig-plot1" class="quarto-xref">Figure&nbsp;1</a> confirms the presence of both trend and seasonality, while the Box–Cox transformation applied earlier successfully stabilizes variance, as seen in <a href="#fig-plot4" class="quarto-xref">Figure&nbsp;4</a>.</p>
+<p>To formally assess stationarity and guide differencing decisions, a set of unit root tests are applied to the transformed series. The KPSS test results in <a href="#tbl-table1" class="quarto-xref">Table&nbsp;1</a> return a p-value of 0.01, providing evidence against stationarity in the undifferenced series. Automated differencing diagnostics suggest applying one seasonal difference (<a href="#tbl-table2" class="quarto-xref">Table&nbsp;2</a>) and one regular difference (<a href="#tbl-table3" class="quarto-xref">Table&nbsp;3</a>).</p>
+<p>After applying both a seasonal difference of order 12 and a first-order difference, the KPSS test is repeated on the fully differenced series. The resulting p-value of 0.1 in <a href="#tbl-table4" class="quarto-xref">Table&nbsp;4</a> indicates that there is no strong evidence against stationarity, suggesting that the differencing strategy has been effective.</p>
+<p>This progression is also reflected visually. The seasonally differenced series shown in <a href="#fig-plot6" class="quarto-xref">Figure&nbsp;6</a> no longer exhibits clear seasonal patterns, but still displays some residual structure. Applying an additional first-order difference yields the series in <a href="#fig-plot7" class="quarto-xref">Figure&nbsp;7</a>, which fluctuates around a constant mean with no obvious trend or seasonality, consistent with a stationary process.</p>
+<p>Overall, these results indicate that one seasonal difference and one regular difference are sufficient to achieve stationarity, providing an appropriate foundation for ARIMA model identification in the next section.</p>
 </section>
-<section id="evaluation" class="level1">
-<h1>Evaluation</h1>
+</section>
+</section>
+<section id="model-identification-and-selection" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Model Identification and Selection</h1>
+<section id="candidate-model-specification" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="candidate-model-specification"><span class="header-section-number">4.1</span> Candidate model specification</h2>
+<section id="exponential-smoothing-ets-models" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="exponential-smoothing-ets-models"><span class="header-section-number">4.1.1</span> Exponential smoothing (ETS) models</h3>
+<p>Based on the exploratory analysis, the series exhibits a clear trend, strong seasonality, increasing variance, and occasional sharp movements. These characteristics motivate the use of exponential smoothing models that can accommodate trend damping and multiplicative effects.</p>
+<p>A set of candidate ETS models is considered. All models use a damped additive trend to reflect the expectation that long-run growth may flatten over time, particularly given the observed fluctuations in the series. The shortlisted models include:</p>
+<ol type="1">
+<li>an additive Holt–Winters specification,</li>
+<li>a hybrid model with multiplicative errors and additive seasonality,</li>
+<li>a fully multiplicative specification,</li>
+<li>and an automatically selected ETS model.</li>
+</ol>
+<p>These candidates allow comparison between different assumptions about how variance and seasonal effects scale with the level of the series.</p>
+</section>
+<section id="arima-model-identification" class="level3" data-number="4.1.2">
+<h3 data-number="4.1.2" class="anchored" data-anchor-id="arima-model-identification"><span class="header-section-number">4.1.2</span> ARIMA model identification</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot8" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="analysis_files/figure-html/fig-plot8-1.png" id="fig-plot8" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plot8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>ARIMA model identification is guided by the autocorrelation and partial autocorrelation functions of the transformed and differenced series, shown in <a href="#fig-plot8" class="quarto-xref">Figure&nbsp;8</a>. One regular difference and one seasonal difference are retained, consistent with the stationarity analysis in the previous section, resulting in a baseline structure of (0,1,0)(0,1,0)12.</p>
+<p>Inspection of the ACF suggests the presence of a non-seasonal moving average component at lag 1, while the PACF indicates a potential non-seasonal autoregressive component at lag 2. At the seasonal level, a significant spike at lag 12 in the ACF suggests a seasonal MA(1) term, while spikes at lags 12 and 24 in the PACF indicate a possible seasonal AR(2) structure.</p>
+<p>Based on these patterns, two candidate ARIMA specifications are selected: (2,1,0)(2,1,0)_12and (2,1,0)(0,1,1)12, alongside an automatically selected ARIMA model.</p>
+</section>
+</section>
+<section id="model-comparison-using-information-criteria" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="model-comparison-using-information-criteria"><span class="header-section-number">4.2</span> Model comparison using information criteria</h2>
+<section id="ets-model-comparison" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="ets-model-comparison"><span class="header-section-number">4.2.1</span> ETS model comparison</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: turnover 
+Model: ETS(M,A,M) 
+  Smoothing parameters:
+    alpha = 0.4742735 
+    beta  = 0.0001020771 
+    gamma = 0.09602882 
+
+  Initial states:
+     l[0]       b[0]     s[0]    s[-1]     s[-2]    s[-3]    s[-4]    s[-5]
+ 1.972875 0.01933869 1.003071 0.850079 0.8493874 1.127858 1.009289 1.006564
+     s[-6]    s[-7]    s[-8]    s[-9]   s[-10]   s[-11]
+ 0.9638753 1.036554 1.000923 1.164525 1.057154 0.930721
+
+  sigma^2:  0.0073
+
+     AIC     AICc      BIC 
+1786.523 1788.155 1854.078 </code></pre>
+</div>
+</div>
+<div id="tbl-table5" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5
+</figcaption>
+<div aria-describedby="tbl-table5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 9
+  .model    sigma2 log_lik   AIC  AICc   BIC   MSE  AMSE    MAE
+  &lt;chr&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1 ETS_auto 0.00734   -876. 1787. 1788. 1854. 0.289 0.350 0.0648
+2 ETS_MAdA 0.00759   -880. 1797. 1798. 1868. 0.309 0.389 0.0658
+3 ETS_MAdM 0.00764   -881. 1797. 1799. 1869. 0.290 0.355 0.0652
+4 ETS_AAdA 0.311     -936. 1908. 1909. 1979. 0.298 0.372 0.411 </code></pre>
+</div>
+</div>
+</figure>
+</div>
+<p>The candidate ETS models are fitted to the training data and compared using the Akaike Information Criterion (AIC), with results summarised in <a href="#tbl-table5" class="quarto-xref">Table&nbsp;5</a>. The automatically selected ETS model, ETS(M,A,M), achieves the lowest AIC, indicating the best in-sample fit among the specifications considered.</p>
+<p>However, the damped-trend models ETS(M,Ad,A) and ETS(M,Ad,M) perform comparably in terms of AIC, with only marginally higher values. Given their damped trend structure, these models remain plausible alternatives, particularly if long-run growth is expected to slow.</p>
+</section>
+<section id="arima-model-comparison" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="arima-model-comparison"><span class="header-section-number">4.2.2</span> ARIMA model comparison</h3>
+<div id="tbl-table6" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;6
+</figcaption>
+<div aria-describedby="tbl-table6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A mable: 3 x 2
+# Key:     Model name [3]
+  `Model name`                    Orders
+  &lt;chr&gt;                          &lt;model&gt;
+1 model1       &lt;ARIMA(2,1,0)(2,1,0)[12]&gt;
+2 model2       &lt;ARIMA(2,1,0)(0,1,1)[12]&gt;
+3 auto         &lt;ARIMA(2,1,0)(0,1,1)[12]&gt;</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<div id="tbl-table7" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;7
+</figcaption>
+<div aria-describedby="tbl-table7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 6
+  .model  sigma2 log_lik   AIC  AICc   BIC
+  &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 model2 0.00708    395. -781. -781. -766.
+2 auto   0.00708    395. -781. -781. -766.
+3 model1 0.00817    373. -736. -736. -717.</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<p>A similar comparison is conducted for the ARIMA candidates. The automatically selected ARIMA model matches the manually specified (2,1,0)(0,1,1)12 model, as shown in <a href="#tbl-table6" class="quarto-xref">Table&nbsp;6</a>. Both specifications achieve the lowest AIC values in <a href="#tbl-table7" class="quarto-xref">Table&nbsp;7</a>, indicating strong in-sample performance relative to the alternative candidate.</p>
+</section>
+</section>
+<section id="test-set-evaluation-and-final-model-selection" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="test-set-evaluation-and-final-model-selection"><span class="header-section-number">4.3</span> Test-set evaluation and final model selection</h2>
+<div id="tbl-table8" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;8
+</figcaption>
+<div aria-describedby="tbl-table8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 10
+  .model   .type     ME  RMSE   MAE    MPE  MAPE  MASE RMSSE  ACF1
+  &lt;chr&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 ETS_MAdA Test  -0.672  1.01 0.879  -7.69  9.55   NaN   NaN 0.178
+2 ETS_AAdA Test  -0.823  1.12 0.976  -9.40 10.7    NaN   NaN 0.124
+3 ETS_auto Test  -0.840  1.13 0.961  -9.23 10.3    NaN   NaN 0.174
+4 ETS_MAdM Test  -1.02   1.27 1.08  -11.1  11.6    NaN   NaN 0.164</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<div id="tbl-table9" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9
+</figcaption>
+<div aria-describedby="tbl-table9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 10
+  .model .type    ME  RMSE   MAE   MPE  MAPE  MASE RMSSE   ACF1
+  &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1 auto   Test  -1.14  1.35  1.16 -12.3  12.4   NaN   NaN 0.0300
+2 model2 Test  -1.14  1.35  1.16 -12.3  12.4   NaN   NaN 0.0300
+3 model1 Test  -1.46  1.78  1.46 -15.3  15.3   NaN   NaN 0.306 </code></pre>
+</div>
+</div>
+</figure>
+</div>
+<p>To assess out-of-sample performance, all shortlisted ETS and ARIMA models are evaluated on a 24-month test set. Forecast accuracy metrics for ETS and ARIMA models are reported in <a href="#tbl-table8" class="quarto-xref">Table&nbsp;8</a> and <a href="#tbl-table9" class="quarto-xref">Table&nbsp;9</a>, respectively.</p>
+<p>For the ARIMA models, the (2,1,0)(0,1,1)12 specification achieves both the lowest AIC and the lowest test-set RMSE, and is also selected automatically by the ARIMA procedure. This consistency supports its selection as the preferred ARIMA model.</p>
+<p>For the ETS models, the automatically selected ETS(M,A,M) model achieves the lowest AIC but performs less well on the test set. In contrast, ETS(M,Ad,A) delivers the lowest test-set RMSE among ETS candidates while maintaining a competitive AIC value. Given its superior out-of-sample performance and damped trend structure, ETS(M,Ad,A) is selected as the preferred ETS model.</p>
+<p>These two models are carried forward for detailed diagnostics and forecasting in the next section.</p>
+</section>
+</section>
+<section id="evaluation" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Evaluation</h1>
 </section>
 
 </main>

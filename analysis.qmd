@@ -3,13 +3,14 @@ title: "Applied Retail Forecasting"
 format:
   html:
     toc: true
-    toc-depth: 2
+    toc-depth: 3
+    number-sections: true
     code-fold: true
 execute:
   echo: false
 ---
 
-## Overview
+# Overview
 
 This project applies classical time series forecasting techniques to Australian retail turnover data, with a focus on furniture and household goods retailing in the Northern Territory of Australia. Using monthly data published by the Australian Bureau of Statistics, the analysis aims to understand the underlying structure of the series and assess how different forecasting approaches perform in practice.
 
@@ -19,7 +20,7 @@ Two model families are considered: Exponential Smoothing State Space (ETS) model
 
 The goal of this project is not only to produce forecasts, but to demonstrate a transparent and defensible forecasting workflow, highlighting the trade-offs between model interpretability, stability, and responsiveness when applied to real-world economic data.
 
-## Data
+# Data
 
 This analysis uses monthly retail turnover data from the Australian Bureau of Statistics (ABS), Retail Trade, Table 11.
 
@@ -104,7 +105,7 @@ gt(head(retail_clean))
 ```
 
 
-## Exploratory Data Analaysis (EDA)
+# Exploratory Data Analaysis (EDA)
 
 Exploratory analysis is used to understand the overall structure of the retail turnover series before any modeling is performed. This includes examining long-term trends, seasonal patterns, and changes in variability over time, as well as identifying potential structural breaks linked to broader economic conditions.
 
@@ -113,7 +114,7 @@ A set of time series visualizations are used to assess these features. These plo
 The insights from this exploratory stage inform later decisions around transformation, decomposition, and model selection.
 
 
-### Trend, seasonality, and structural features
+## Trend, seasonality, and structural features
 
 ```{r}
 #| label: fig-plot1
@@ -236,7 +237,306 @@ Figure @fig-plot4 compares the Box–Cox transformation using the Guerrero-estim
 
 Overall, comparison with the original series in @fig-plot1 indicates that the transformation is effective in achieving approximate variance stability, making the data more suitable for subsequent decomposition and time series modelling.
 
-# Models
+### Seasonal-trend decomposition using STL
+
+```{r}
+#| label: fig-plot5
+#| message: false
+#| error: false
+#| warning: false
+
+# Creating a new variable with the box_cox transformed data
+retail_train <- retail_train |> 
+  mutate(bc_turnover = box_cox(turnover, 0))
+
+# Performing STL Decomposition
+retail_train |> 
+  model(stl = STL(bc_turnover ~ season(window = 13) +
+                    trend(window = 25),
+                    robust = TRUE)) |> 
+  components() |> 
+  autoplot() +
+  theme_bw() +
+  labs(title = "STL Decomposition | season=13 & trend=25",
+       x = "Month (1M)")
+
+```
+
+Following variance stabilization, the transformed series is decomposed using STL to separate the trend, seasonal, and remainder components. This helps assess whether seasonality is stable over time and whether any meaningful structure remains unexplained.
+
+Because the series spans multiple decades, STL parameters are adjusted rather than relying on defaults. The seasonal window is set to 13 to allow the seasonal component to vary smoothly while still reflecting an annual cycle, which is appropriate for monthly retail data where recurring patterns such as end-of-financial-year and holiday periods are expected. The trend window is set to 25 to capture medium-term movements (roughly two years), allowing the trend component to reflect gradual shifts associated with changing economic conditions in the Northern Territory.
+
+Given the presence of irregular spikes and sharp movements, particularly between 2007 and 2022, `robust = TRUE` is used to reduce the influence of extreme observations on the estimated components. With these settings, the decomposition in @fig-plot5 shows a well-defined long-term trend, a stable seasonal pattern, and a remainder that appears largely noise-like, suggesting that the major structure of the series has been captured.
+
+Overall, the STL decomposition confirms that this turnover series is characterized by a persistent long-run trend and consistent seasonal variation year to year, supporting the use of seasonal forecasting models in later sections.
+
+### Stationarity and differencing
+
+```{r}
+#| label: tbl-table1
+
+## KPSS Test Before transformation
+
+retail_train |> 
+  select(-c(state, industry, turnover)) |> 
+  features(bc_turnover, unitroot_kpss)
+
+```
+
+```{r}
+#| label: tbl-table2
+
+## Number of seasonal differences recommended
+
+retail_train |> 
+  select(-c(state, industry, turnover)) |> 
+  features(bc_turnover, unitroot_nsdiffs)
+
+```
+
+
+```{r}
+#| label: tbl-table3
+
+## Number of regular differences recommended
+
+retail_train |> 
+  select(-c(state, industry, turnover)) |> 
+  features(bc_turnover, unitroot_ndiffs)
+
+```
+
+
+```{r}
+#| label: tbl-table4
+
+## KPSS Test after transformation 
+
+retail_train <- retail_train |>
+  mutate(transformed = box_cox(turnover, 0) |>
+    difference(12) |>
+    difference(1))
+
+retail_train |>
+  select(-c(state, industry)) |>
+  features(transformed, unitroot_kpss)
+
+```
+
+```{r}
+#| label: fig-plot6
+#| message: false
+#| error: false
+#| warning: false
+
+# Plotting the data after seasonal differencing on 
+# the box cox transformed dataset
+
+retail_train |> 
+  autoplot(bc_turnover |> 
+             difference(12)) +
+  theme_bw() +
+  labs(title = "Seasonally Differenced Retail Dataset",
+       x = "Month (1M)",
+       y = "Turnover ($ Millions)")
+
+```
+
+
+```{r}
+#| label: fig-plot7
+#| message: false
+#| error: false
+#| warning: false
+
+# Plotting the data after first order differencing on
+# the box cox transformed dataset
+
+retail_train |> 
+  autoplot(bc_turnover |> 
+             difference(12) |> 
+             difference(1)) +
+  theme_bw() +
+  labs(title = "Seasonally and First Differenced Retail Dataset",
+       x = "Month (1M)",
+       y = "Turnover ($ Millions)")
+
+
+```
+
+Before fitting ARIMA models, the series must be made stationary by removing any remaining trend and seasonal structure. Visual inspection of the original series in @fig-plot1 confirms the presence of both trend and seasonality, while the Box–Cox transformation applied earlier successfully stabilizes variance, as seen in @fig-plot4.
+
+To formally assess stationarity and guide differencing decisions, a set of unit root tests are applied to the transformed series. The KPSS test results in @tbl-table1 return a p-value of 0.01, providing evidence against stationarity in the undifferenced series. Automated differencing diagnostics suggest applying one seasonal difference (@tbl-table2) and one regular difference (@tbl-table3).
+
+After applying both a seasonal difference of order 12 and a first-order difference, the KPSS test is repeated on the fully differenced series. The resulting p-value of 0.1 in @tbl-table4 indicates that there is no strong evidence against stationarity, suggesting that the differencing strategy has been effective.
+
+This progression is also reflected visually. The seasonally differenced series shown in @fig-plot6 no longer exhibits clear seasonal patterns, but still displays some residual structure. Applying an additional first-order difference yields the series in @fig-plot7, which fluctuates around a constant mean with no obvious trend or seasonality, consistent with a stationary process.
+
+Overall, these results indicate that one seasonal difference and one regular difference are sufficient to achieve stationarity, providing an appropriate foundation for ARIMA model identification in the next section.
+
+# Model Identification and Selection
+
+## Candidate model specification
+
+### Exponential smoothing (ETS) models
+
+Based on the exploratory analysis, the series exhibits a clear trend, strong seasonality, increasing variance, and occasional sharp movements. These characteristics motivate the use of exponential smoothing models that can accommodate trend damping and multiplicative effects.
+
+A set of candidate ETS models is considered. All models use a damped additive trend to reflect the expectation that long-run growth may flatten over time, particularly given the observed fluctuations in the series. The shortlisted models include:
+
+1) an additive Holt–Winters specification, 
+2) a hybrid model with multiplicative errors and additive seasonality, 
+3) a fully multiplicative specification, 
+4) and an automatically selected ETS model.
+
+These candidates allow comparison between different assumptions about how variance and seasonal effects scale with the level of the series.
+
+### ARIMA model identification
+
+```{r}
+#| label: fig-plot8
+#| message: false
+#| error: false
+#| warning: false
+
+# Plotting the ACF and PACF Plots for ARIMA Model Identification
+retail_train |>
+  gg_tsdisplay(transformed, plot_type = "partial", lag = 36) +
+  labs(title = "ACF and PACF Plots For ARIMA Model Identification")
+
+```
+
+ARIMA model identification is guided by the autocorrelation and partial autocorrelation functions of the transformed and differenced series, shown in @fig-plot8. One regular difference and one seasonal difference are retained, consistent with the stationarity analysis in the previous section, resulting in a baseline structure of (0,1,0)(0,1,0)[12].
+
+Inspection of the ACF suggests the presence of a non-seasonal moving average component at lag 1, while the PACF indicates a potential non-seasonal autoregressive component at lag 2. At the seasonal level, a significant spike at lag 12 in the ACF suggests a seasonal MA(1) term, while spikes at lags 12 and 24 in the PACF indicate a possible seasonal AR(2) structure.
+
+Based on these patterns, two candidate ARIMA specifications are selected: (2,1,0)(2,1,0)[12] and (2,1,0)(0,1,1)[12], alongside an automatically selected ARIMA model.
+
+
+## Model comparison using information criteria
+
+### ETS model comparison
+
+```{r}
+
+# Fitting ETS models on raw (untransformed) data
+ets_models <- retail_train |>
+  model(
+    ETS_AAdA = ETS(turnover ~ error("A") + trend("Ad") + season("A")),
+    ETS_MAdA = ETS(turnover ~ error("M") + trend("Ad") + season("A")),
+    ETS_MAdM = ETS(turnover ~ error("M") + trend("Ad") + season("M")),
+    ETS_auto = ETS(turnover) 
+  )
+
+# Checking which model the Auto ETS selected
+ets_models |> 
+  select(ETS_auto) |> 
+  report()
+
+```
+
+
+```{r}
+#| label: tbl-table5
+
+# Compare AIC values and model details
+glance(ets_models) |> 
+  # select(-c(state, industry)) |> 
+  arrange(AIC)
+
+```
+
+The candidate ETS models are fitted to the training data and compared using the Akaike Information Criterion (AIC), with results summarized in @tbl-table5. The automatically selected ETS model, ETS(M,A,M), achieves the lowest AIC, indicating the best in-sample fit among the specifications considered.
+
+However, the damped-trend models ETS(M,Ad,A) and ETS(M,Ad,M) perform comparably in terms of AIC, with only marginally higher values. Given their damped trend structure, these models remain plausible alternatives, particularly if long-run growth is expected to slow.
+
+Note: ETS models are fitted to the original turnover series, as exponential smoothing methods natively accommodate trend and seasonality without requiring prior differencing or transformation.
+
+### ARIMA model comparison
+
+```{r}
+#| label: tbl-table6
+
+# Modelling the selected models and the auto selected ARIMA model
+# Using stepwise and approximation = false to allow the function
+# to search deeper and harder for the best fitting model
+
+arima_models <- retail_train |>
+  model(
+    model1 = ARIMA(box_cox(turnover, 0) ~ pdq(2, 1, 0) + PDQ(2, 1, 0)),
+    model2 = ARIMA(box_cox(turnover, 0) ~ pdq(2, 1, 0) + PDQ(0, 1, 1)),
+    auto = ARIMA(box_cox(turnover, 0), stepwise = FALSE, approximation = FALSE)
+  )
+
+# Clean printing the models and auto selected model.
+
+arima_models |> 
+  # select(-state, -industry) |> 
+  pivot_longer(everything(),
+  names_to = "Model name",
+  values_to = "Orders"
+)
+
+```
+
+```{r}
+#| label: tbl-table7
+
+# Viewing model performance statistics, arranged by AIC
+
+glance(arima_models) |> 
+  arrange(AIC) |> 
+  select(.model:BIC)
+
+```
+
+
+A similar comparison is conducted for the ARIMA candidates. The automatically selected ARIMA model matches the manually specified (2,1,0)(0,1,1)[12] model, as shown in @tbl-table6. Both specifications achieve the lowest AIC values in @tbl-table7, indicating strong in-sample performance relative to the alternative candidate.
+
+## Test-set evaluation and final model selection
+
+```{r}
+
+# Generate forecasts for the next 24 months
+forecasts_ets <- ets_models |> 
+  forecast(new_data = retail_test)
+
+forecasts_arima <- arima_models |> 
+  forecast(new_data = retail_test)
+
+# Evaluate forecast accuracy for ETS models
+accuracy_ets <- fabletools::accuracy(forecasts_ets, retail_test) |> 
+  # select(-c(state, industry)) |> 
+  arrange(RMSE)
+
+# Evaluate forecast accuracy for ARIMA models
+accuracy_arima <- fabletools::accuracy(forecasts_arima, retail_test) |> 
+  # select(-c(state, industry)) |> 
+  arrange(RMSE)
+
+```
+
+```{r}
+#| label: tbl-table8
+
+accuracy_ets
+```
+
+```{r}
+#| label: tbl-table9
+
+accuracy_arima
+
+```
+
+To assess out-of-sample performance, all shortlisted ETS and ARIMA models are evaluated on a 24-month test set. Forecast accuracy metrics for ETS and ARIMA models are reported in @tbl-table8 and @tbl-table9, respectively.
+
+For the ARIMA models, the (2,1,0)(0,1,1)[12] specification achieves both the lowest AIC and the lowest test-set RMSE, and is also selected automatically by the ARIMA procedure. This consistency provides strong support for its selection as the preferred ARIMA model.
+
+For the ETS models, the automatically selected ETS(M,A,M) model achieves the lowest AIC but performs less well on the test set. In contrast, ETS(M,Ad,A) delivers the lowest test-set RMSE among ETS candidates while maintaining a competitive AIC value. Given its superior out-of-sample performance and damped trend structure, ETS(M,Ad,A) is selected as the preferred ETS model.
+
+These two models are carried forward for detailed diagnostics and forecasting in the next section.
+
 
 # Evaluation
 
