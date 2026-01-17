@@ -9,7 +9,7 @@ execute:
   echo: false
 ---
 
-# Overview
+## Overview
 
 This project applies classical time series forecasting techniques to Australian retail turnover data, with a focus on furniture and household goods retailing in the Northern Territory of Australia. Using monthly data published by the Australian Bureau of Statistics, the analysis aims to understand the underlying structure of the series and assess how different forecasting approaches perform in practice.
 
@@ -19,7 +19,7 @@ Two model families are considered: Exponential Smoothing State Space (ETS) model
 
 The goal of this project is not only to produce forecasts, but to demonstrate a transparent and defensible forecasting workflow, highlighting the trade-offs between model interpretability, stability, and responsiveness when applied to real-world economic data.
 
-# Data
+## Data
 
 This analysis uses monthly retail turnover data from the Australian Bureau of Statistics (ABS), Retail Trade, Table 11.
 
@@ -61,6 +61,7 @@ retail <- read_abs(cat_no = "8501.0", tables = 11) |>
 
 # For simplicity purposes, the dataset will be saved to local
 # write_csv(retail, "data/retail.csv")
+# write_rds(retail, "data/retail.rds")
 
 ```
 
@@ -69,7 +70,7 @@ retail <- read_abs(cat_no = "8501.0", tables = 11) |>
 #| label: load-and-clean-data
 
 # For simplicity purposes, the dataset will be loaded from local
-retail <- read_csv("data/retail.csv")
+retail <- read_rds("data/retail.rds")
 
 # Clean and prepare for analysis
 retail_clean <- retail |> 
@@ -103,7 +104,7 @@ gt(head(retail_clean))
 ```
 
 
-# Exploratory Data Analaysis (EDA)
+## Exploratory Data Analaysis (EDA)
 
 Exploratory analysis is used to understand the overall structure of the retail turnover series before any modeling is performed. This includes examining long-term trends, seasonal patterns, and changes in variability over time, as well as identifying potential structural breaks linked to broader economic conditions.
 
@@ -112,7 +113,7 @@ A set of time series visualizations are used to assess these features. These plo
 The insights from this exploratory stage inform later decisions around transformation, decomposition, and model selection.
 
 
-## Trend, seasonality, and structural features
+### Trend, seasonality, and structural features
 
 ```{r}
 #| label: fig-plot1
@@ -176,6 +177,64 @@ The subseries plot in @fig-plot3 further reinforces these findings by displaying
 
 One notable feature in the subseries plot is an unusually high turnover value observed in July around 2007. This may represent a genuine economic anomaly linked to exceptional conditions during that period, although the possibility of a data irregularity cannot be ruled out. Overall, the exploratory analysis confirms the presence of trend, seasonality, and changing variance, all of which are important considerations for subsequent transformation and model selection.
 
+## Data transformation and decomposition
+
+This section focuses on preparing the series for modelling by addressing changing variance and separating the underlying components of the time series. These steps help ensure that subsequent models are applied to data that are more stable and interpretable.
+
+### Variance stabilisation using the Box–Cox transformation
+
+```{r}
+
+# Extracting Guerrero lambda value for Box-Cox Transformation
+lambda_retail <- retail_train |> 
+  features(turnover, features = guerrero) |> 
+  pull(lambda_guerrero)
+
+```
+
+```{r}
+
+# Transforming the dataset with lambda 
+bct_plot1 <- retail_train |> 
+  autoplot(box_cox(turnover, lambda_retail)) +
+  theme_bw() +
+  labs(title = "Lambda Transformed Retail Dataset",
+       x = "Month (1M)",
+       y = "Lambda Transformed Turnover ($ Millions)") +
+  theme(plot.title = element_text(size = 12))
+
+```
+
+```{r}
+
+# Transforming the dataset with log 
+bct_plot2 <- retail_train |> 
+  autoplot(box_cox(turnover, 0)) +
+  theme_bw() +
+  labs(title = "Log Transformed Retail Datase",
+       x = "Month (1M)",
+       y = "Log Transformed Turnover ($ Millions)")  +
+  theme(plot.title = element_text(size = 12))
+
+```
+
+```{r}
+#| label: fig-plot4
+#| message: false
+#| error: false
+#| warning: false
+
+# Plotting both of the figures side by side
+bct_plot1 + bct_plot2
+
+```
+
+To stabilize the variance of the series and address heteroskedasticity, a Box–Cox transformation is applied to the retail turnover data. The transformation parameter 
+λ is selected using the Guerrero method, which chooses the value that minimizes variability across seasonal subseries. Applying this procedure yields an estimated λ value of 0.242.
+
+Figure @fig-plot4 compares the Box–Cox transformation using the Guerrero-estimated value with a log transformation, corresponding to λ = 0. Both transformations reduce variance instability relative to the original series; however, the log-transformed series exhibits slightly tighter peaks and troughs, indicating more consistent variance across seasonal periods. The estimated value being close to zero suggests that a log transformation is sufficient in practice.
+
+Overall, comparison with the original series in @fig-plot1 indicates that the transformation is effective in achieving approximate variance stability, making the data more suitable for subsequent decomposition and time series modelling.
 
 # Models
 
