@@ -1,6 +1,6 @@
 ## Data source
 
-This project uses monthly retail turnover data from the Australian Bureau of Statistics (ABS).
+This project uses monthly retail turnover data from the [Australian Bureau of Statistics (ABS).](https://www.abs.gov.au/statistics/industry/retail-and-wholesale-trade/retail-trade-australia/jun-2025)
 
 - Catalogue: 8501.0 – Retail Trade
 - Table: 11
