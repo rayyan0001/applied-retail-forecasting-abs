@@ -1,11 +1,87 @@
 ---
-title: "analysis"
-format: html
+title: "Applied Retail Forecasting"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+execute:
+  echo: false
 ---
 
 # Overview
 
 # Data
+
+This analysis uses monthly retail turnover data from the Australian Bureau of Statistics
+(ABS), Retail Trade, Table 11.
+
+The series represents turnover for furniture, floor coverings, houseware and textile goods retailing in the Northern Territory, measured in millions of Australian dollars. The data spans April 1988 to December 2022 and is observed at a monthly frequency.
+
+
+```{r}
+#| label: load-libraries
+#| message: false
+
+# Loading libraries
+
+library(tidyverse)
+library(fpp3)
+library(janitor)
+library(lubridate)
+library(patchwork)
+library(readabs)
+library(yardstick)
+
+```
+
+```{r}
+#| label: get-data
+#| message: false
+
+# Get data from ABS
+retail <- read_abs(cat_no = "8501.0", tables = 11) |>
+  filter(series_id == "A3349526J") |>
+  transmute(
+    State = "Northern Territory",
+    Industry = "Furniture, floor coverings, houseware and textile goods retailing",
+    `Series ID` = series_id,
+    Month = yearmonth(date),
+    Turnover = value
+  ) |>
+  as_tsibble(index = Month)
+
+
+# Clean and prepare for analysis
+retail_clean <- retail |> 
+  clean_names() |> 
+  drop_na() |>
+  filter(month <= yearmonth("2022 Dec"))
+
+# For simplicity purposes, the dataset will be downloaded to local
+# write_csv(retail, "data/retail.csv")
+
+# For simplicity purposes, the dataset will be loaded from local
+# retail <- read_csv("data/retail.csv")
+
+```
+
+
+```{r}
+
+# Splitting the data into train and test sets
+
+# Training set: up to and including 2020
+retail_train <- retail_clean |> 
+  slice_head(n = nrow(retail_clean) - 24)
+
+# Test set: from 2020 onwards
+retail_test <- retail_clean |> 
+  slice_tail(n = 24)
+
+```
+
+
 
 # Exploratory Data Analaysis (EDA)
 
