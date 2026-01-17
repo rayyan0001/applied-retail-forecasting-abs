@@ -49,7 +49,10 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
   <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
-  <li><a href="#exploratory-data-analaysis-eda" id="toc-exploratory-data-analaysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analaysis-eda">Exploratory Data Analaysis (EDA)</a></li>
+  <li><a href="#exploratory-data-analaysis-eda" id="toc-exploratory-data-analaysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analaysis-eda">Exploratory Data Analaysis (EDA)</a>
+  <ul class="collapse">
+  <li><a href="#trend-seasonality-and-structural-features" id="toc-trend-seasonality-and-structural-features" class="nav-link" data-scroll-target="#trend-seasonality-and-structural-features">Trend, seasonality, and structural features</a></li>
+  </ul></li>
   <li><a href="#models" id="toc-models" class="nav-link" data-scroll-target="#models">Models</a></li>
   <li><a href="#evaluation" id="toc-evaluation" class="nav-link" data-scroll-target="#evaluation">Evaluation</a></li>
   </ul>
@@ -78,12 +81,583 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="overview" class="level1">
 <h1>Overview</h1>
+<p>This project applies classical time series forecasting techniques to Australian retail turnover data, with a focus on furniture and household goods retailing in the Northern Territory of Australia. Using monthly data published by the Australian Bureau of Statistics, the analysis aims to understand the underlying structure of the series and assess how different forecasting approaches perform in practice.</p>
+<p>The workflow follows a standard applied forecasting process. The data are first explored to identify trends, seasonality, and structural changes, including the impact of major economic events such as COVID-19. Variance-stabilising transformations and decomposition techniques are then used to better understand the series before fitting and evaluating models.</p>
+<p>Two model families are considered: Exponential Smoothing State Space (ETS) models and Seasonal ARIMA models. Model selection is guided by a combination of information criteria, residual diagnostics, and out-of-sample performance using a 24-month test set. Forecast accuracy is further assessed by comparing model predictions to subsequently released ABS data.</p>
+<p>The goal of this project is not only to produce forecasts, but to demonstrate a transparent and defensible forecasting workflow, highlighting the trade-offs between model interpretability, stability, and responsiveness when applied to real-world economic data.</p>
 </section>
 <section id="data" class="level1">
 <h1>Data</h1>
+<p>This analysis uses monthly retail turnover data from the Australian Bureau of Statistics (ABS), Retail Trade, Table 11.</p>
+<p>The series represents turnover for furniture, floor coverings, houseware and textile goods retailing in the Northern Territory of Australia, measured in millions of Australian dollars. The data span April 1988 to December 2022 and are observed at a monthly frequency. A small sample of the dataset is shown below.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="opgrbyqbjo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#opgrbyqbjo table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#opgrbyqbjo thead, #opgrbyqbjo tbody, #opgrbyqbjo tfoot, #opgrbyqbjo tr, #opgrbyqbjo td, #opgrbyqbjo th {
+  border-style: none;
+}
+
+#opgrbyqbjo p {
+  margin: 0;
+  padding: 0;
+}
+
+#opgrbyqbjo .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#opgrbyqbjo .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#opgrbyqbjo .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#opgrbyqbjo .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#opgrbyqbjo .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#opgrbyqbjo .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#opgrbyqbjo .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#opgrbyqbjo .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#opgrbyqbjo .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#opgrbyqbjo .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#opgrbyqbjo .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#opgrbyqbjo .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#opgrbyqbjo .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#opgrbyqbjo .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#opgrbyqbjo .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#opgrbyqbjo .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#opgrbyqbjo .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#opgrbyqbjo .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#opgrbyqbjo .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#opgrbyqbjo .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#opgrbyqbjo .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#opgrbyqbjo .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#opgrbyqbjo .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#opgrbyqbjo .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#opgrbyqbjo .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#opgrbyqbjo .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#opgrbyqbjo .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#opgrbyqbjo .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#opgrbyqbjo .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#opgrbyqbjo .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#opgrbyqbjo .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#opgrbyqbjo .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#opgrbyqbjo .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#opgrbyqbjo .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#opgrbyqbjo .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#opgrbyqbjo .gt_left {
+  text-align: left;
+}
+
+#opgrbyqbjo .gt_center {
+  text-align: center;
+}
+
+#opgrbyqbjo .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#opgrbyqbjo .gt_font_normal {
+  font-weight: normal;
+}
+
+#opgrbyqbjo .gt_font_bold {
+  font-weight: bold;
+}
+
+#opgrbyqbjo .gt_font_italic {
+  font-style: italic;
+}
+
+#opgrbyqbjo .gt_super {
+  font-size: 65%;
+}
+
+#opgrbyqbjo .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#opgrbyqbjo .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#opgrbyqbjo .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#opgrbyqbjo .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#opgrbyqbjo .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#opgrbyqbjo .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#opgrbyqbjo .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#opgrbyqbjo .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#opgrbyqbjo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="state" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">state</th>
+<th id="industry" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">industry</th>
+<th id="series_id" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">series_id</th>
+<th id="month" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">month</th>
+<th id="turnover" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">turnover</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="state">Northern Territory</td>
+<td class="gt_row gt_left" headers="industry">Furniture, floor coverings, houseware and textile goods retailing</td>
+<td class="gt_row gt_left" headers="series_id">A3349526J</td>
+<td class="gt_row gt_center" headers="month">1988 Apr</td>
+<td class="gt_row gt_right" headers="turnover">1.9</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="state">Northern Territory</td>
+<td class="gt_row gt_left" headers="industry">Furniture, floor coverings, houseware and textile goods retailing</td>
+<td class="gt_row gt_left" headers="series_id">A3349526J</td>
+<td class="gt_row gt_center" headers="month">1988 May</td>
+<td class="gt_row gt_right" headers="turnover">2.3</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="state">Northern Territory</td>
+<td class="gt_row gt_left" headers="industry">Furniture, floor coverings, houseware and textile goods retailing</td>
+<td class="gt_row gt_left" headers="series_id">A3349526J</td>
+<td class="gt_row gt_center" headers="month">1988 Jun</td>
+<td class="gt_row gt_right" headers="turnover">2.1</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="state">Northern Territory</td>
+<td class="gt_row gt_left" headers="industry">Furniture, floor coverings, houseware and textile goods retailing</td>
+<td class="gt_row gt_left" headers="series_id">A3349526J</td>
+<td class="gt_row gt_center" headers="month">1988 Jul</td>
+<td class="gt_row gt_right" headers="turnover">1.9</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="state">Northern Territory</td>
+<td class="gt_row gt_left" headers="industry">Furniture, floor coverings, houseware and textile goods retailing</td>
+<td class="gt_row gt_left" headers="series_id">A3349526J</td>
+<td class="gt_row gt_center" headers="month">1988 Aug</td>
+<td class="gt_row gt_right" headers="turnover">2.2</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="state">Northern Territory</td>
+<td class="gt_row gt_left" headers="industry">Furniture, floor coverings, houseware and textile goods retailing</td>
+<td class="gt_row gt_left" headers="series_id">A3349526J</td>
+<td class="gt_row gt_center" headers="month">1988 Sep</td>
+<td class="gt_row gt_right" headers="turnover">1.9</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </section>
 <section id="exploratory-data-analaysis-eda" class="level1">
 <h1>Exploratory Data Analaysis (EDA)</h1>
+<p>Exploratory analysis is used to understand the overall structure of the retail turnover series before any modeling is performed. This includes examining long-term trends, seasonal patterns, and changes in variability over time, as well as identifying potential structural breaks linked to broader economic conditions.</p>
+<p>A set of time series visualizations are used to assess these features. These plots help determine whether the series exhibits trend and seasonality, whether variance appears constant over time, and whether there are periods of unusually high or low volatility. Particular attention is given to changes around major events such as the mining boom period and the COVID-19 pandemic, both of which are expected to have influenced retail behaviour in the Northern Territory.</p>
+<p>The insights from this exploratory stage inform later decisions around transformation, decomposition, and model selection.</p>
+<section id="trend-seasonality-and-structural-features" class="level2">
+<h2 class="anchored" data-anchor-id="trend-seasonality-and-structural-features">Trend, seasonality, and structural features</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot1" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="analysis_files/figure-html/fig-plot1-1.png" id="fig-plot1" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plot1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot2" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="analysis_files/figure-html/fig-plot2-1.png" id="fig-plot2" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plot2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot3" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="analysis_files/figure-html/fig-plot3-1.png" id="fig-plot3" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plot3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The dataset captures monthly retail turnover for furniture, floor coverings, houseware and textile goods retailing in the Northern Territory, spanning April 1988 to December 2022.</p>
+<p>The time series plot in <a href="#fig-plot1" class="quarto-xref">Figure&nbsp;1</a> shows a clear upward long-term trend, indicating sustained growth in retail turnover over the sample period. Seasonal behaviour is also evident, with fluctuations that increase in magnitude as the level of the series rises, suggesting multiplicative seasonality. A pronounced increase in turnover is observed between approximately 2007 and 2009, which likely reflects the effects of the Northern Territory mining boom during that period. Following this, turnover declines sharply post-2010, potentially linked to the global financial crisis and the subsequent slowdown in mining-related economic activity.</p>
+<p>In the years leading up to 2020, turnover appears relatively subdued before rising again during and after the COVID-19 period. While many industries experienced contraction during this time, the increase observed here may reflect shifts in household behaviour, with greater emphasis on home-related spending as lifestyles adjusted. Given the broad scope of this retail category, multiple overlapping factors are likely influencing the observed dynamics.</p>
+<p>The seasonal plot in <a href="#fig-plot2" class="quarto-xref">Figure&nbsp;2</a> highlights strong and consistent seasonal patterns across years. Turnover tends to peak in June and December, while lower values are commonly observed around February and April. The regular repetition of these patterns supports the presence of true seasonality rather than irregular cyclical effects. Although the exact drivers are not directly observed in the data, these patterns may be associated with factors such as end-of-financial-year spending, holiday periods, and seasonal changes in consumer behaviour.</p>
+<p>The subseries plot in <a href="#fig-plot3" class="quarto-xref">Figure&nbsp;3</a> further reinforces these findings by displaying monthly behaviour across the full time span. Each month exhibits a distinct seasonal profile, while also reflecting the broader upward movement in turnover over time. June and December consistently record higher average turnover, whereas February and April remain comparatively weaker months. The horizontal reference lines representing monthly means make these differences particularly clear.</p>
+<p>One notable feature in the subseries plot is an unusually high turnover value observed in July around 2007. This may represent a genuine economic anomaly linked to exceptional conditions during that period, although the possibility of a data irregularity cannot be ruled out. Overall, the exploratory analysis confirms the presence of trend, seasonality, and changing variance, all of which are important considerations for subsequent transformation and model selection.</p>
+</section>
 </section>
 <section id="models" class="level1">
 <h1>Models</h1>
