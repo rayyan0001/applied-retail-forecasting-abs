@@ -537,6 +537,162 @@ For the ETS models, the automatically selected ETS(M,A,M) model achieves the low
 
 These two models are carried forward for detailed diagnostics and forecasting in the next section.
 
+## Model diagnostics and forecasting
+
+### Parameter estimates
+
+```{r}
+#| label: tbl-table10
+
+# ETS model summary
+ets_models |> 
+  select(ETS_MAdA) |> 
+  report()
+
+```
+
+```{r}
+#| label: tbl-table11
+
+# ARIMA model summary
+arima_models |> 
+  select(model2) |> 
+  report()
+
+```
+
+
+Table @tbl-table10 reports the parameter estimates for the selected ETS(M,Ad,A) model. The level smoothing parameter (α = 0.43) indicates that the model places moderate weight on recent observations when updating the series level. The trend smoothing parameter is close to zero, consistent with the use of a damped trend that evolves slowly over time. The seasonal smoothing parameter (γ = 0.096) suggests relatively stable seasonal patterns, with only gradual updating as new data arrive. The damping parameter (ϕ = 0.98) confirms that the trend is expected to persist in the short term but gradually flatten in the long run.
+
+Parameter estimates for the selected ARIMA(2,1,0)(0,1,1)[12] model are shown in @tbl-table11. The negative autoregressive coefficients indicate mild mean-reverting behaviour, where deviations tend to be followed by partial corrections. The seasonal moving average term captures strong dependence at the annual lag, reflecting the importance of shocks occurring at the same time in previous years. Together, these parameters indicate a model that responds to both short-term fluctuations and seasonal structure.
+
+
+### Residual diagnostics
+
+
+```{r}
+#| label: fig-plot9
+
+# ETS residual diagnostics
+ets_models |> 
+  select(ETS_MAdA) |> 
+  gg_tsresiduals() +
+  labs(title = "Residual Plots for ETS Model")
+
+```
+
+```{r}
+#| label: tbl-table12
+
+# ETS Ljung-Box test
+ets_models |> 
+  select(ETS_MAdA) |> 
+  augment() |> 
+  features(.resid, ljung_box, lag = 24, dof = 3)
+
+```
+
+```{r}
+#| label: fig-plot10
+
+# ARIMA residual diagnostics
+arima_models |> 
+  select(model2) |> 
+  gg_tsresiduals()  +
+  labs(title = "Residual Plots for ARIMA Model")
+
+```
+
+```{r}
+#| label: tbl-table13
+
+# ARIMA Ljung-Box test
+arima_models |> 
+  select(model2) |> 
+  augment() |> 
+  features(.resid, ljung_box, lag = 24, dof = 3)
+
+```
+
+Residual diagnostics are used to assess whether the fitted models have adequately captured the systematic structure in the data. For the ETS model, the residual plots in @fig-plot9 show several autocorrelation spikes beyond the 95% confidence bounds. This is supported by the Ljung–Box test results in @tbl-table12, which return a very small p-value at lag 24, providing strong evidence against the residuals being white noise. While this suggests that some autocorrelation remains unmodelled, this behaviour is not uncommon for ETS models and does not necessarily preclude good forecasting performance.
+
+In contrast, the residual diagnostics for the ARIMA model in @fig-plot10 show no substantial autocorrelation remaining, with only a single spike marginally exceeding the confidence bounds. The Ljung–Box test in @tbl-table13 returns a p-value of 0.069, indicating no strong evidence of residual autocorrelation. This suggests that the ARIMA model has captured the underlying dependence structure effectively and produces residuals consistent with white noise.
+
+### Forecasts and prediction intervals
+
+```{r}
+#| label: fig-plot11
+
+# Combining the models into one "fit" object 
+fit <- retail_train |>
+  model(
+    final_ets = ETS(turnover ~ error("M") + trend("Ad") + season("A")),
+    final_arima = ARIMA(box_cox(turnover, 0) ~ pdq(2, 1, 0) + PDQ(0, 1, 1))
+  )
+
+# Forecasting
+fc_plot <- fit |> 
+  forecast(h = "2 years")
+
+
+# Plot forecasts
+fc_plot |> 
+  autoplot(retail_clean, size = 1) + 
+  theme_bw() +
+  labs(title = "Forecasts from Final ETS and ARIMA Models", 
+       y = "Turnover ($ Millions)", 
+       x = "Year")
+
+
+```
+
+Forecasts from the selected ETS and ARIMA models are shown in @fig-plot11. Both models generate similar short-term forecasts and capture the recurring seasonal pattern in the data. However, differences emerge in their treatment of longer-term uncertainty.
+
+The ETS model produces smoother forecasts with relatively narrow prediction intervals, reflecting its damped trend structure and assumption of stable long-run behaviour. In contrast, the ARIMA model produces wider prediction intervals, indicating greater sensitivity to recent variability and uncertainty in future dynamics. While both forecasts are plausible, the ARIMA model reflects a higher degree of uncertainty, whereas the ETS model provides more conservative and stable projections.
+
+### Test-set comparison
+
+Both the ETS and ARIMA models perform well on the 24-month test set, capturing the underlying seasonal structure and overall movement in retail turnover. However, differences emerge when comparing forecast accuracy and uncertainty.
+
+The ETS(M,Ad,A) model achieves the lowest RMSE on the test set, as shown in @tbl-table8 and @tbl-table9, indicating superior out-of-sample accuracy. Its forecasts are smoother and more stable, reflecting the damped trend structure and assumption of gradual long-run behaviour.
+
+In contrast, the ARIMA(2,1,0)(0,1,1)[12] model achieves a slightly lower in-sample AIC and responds more strongly to recent fluctuations in the data. While this flexibility allows it to adapt quickly to changes, it also results in higher test-set RMSE and wider prediction intervals, indicating greater forecast uncertainty.
+
+Overall, the ETS model provides more stable and reliable forecasts in an out-of-sample setting, while the ARIMA model may be preferable in environments where rapid changes and short-term volatility are of primary interest.
+
+
+### Final forecasts using full data
+
+```{r}
+#| label: fig-plot12
+
+# Refitting the models to the full dataset
+fit_full <- retail_clean |> 
+  model(
+    final_ets = ETS(turnover ~ error("M") + trend("Ad") + season("A")),
+    final_arima = ARIMA(box_cox(turnover, 0) ~ pdq(2, 1, 0) + PDQ(0, 1, 1))
+  )
+
+# Forecasting for 2 years after end of dataset
+forecast_full <- fit_full |> 
+  forecast(h = "2 years")
+
+# Plotting forecasts
+autoplot(retail_clean, turnover) +
+  autolayer(forecast_full, size = 1, level = 80) +
+  theme_bw() +
+  labs(title = "Two-year forecasts from refitted ETS and ARIMA models",
+       y = "Turnover ($ Millions)",
+       x = "Year")
+
+```
+
+To produce final forecasts, both selected models are refitted to the full dataset using the same model structures identified earlier. Parameter estimates are re-estimated, but no changes are made to the model specifications.
+
+Figure @fig-plot12 shows two-year ahead forecasts from the refitted ETS and ARIMA models, along with 80% prediction intervals. Both models project a continuation of recent trends and seasonal patterns, while differing in the degree of forecast uncertainty. The ETS forecasts remain relatively smooth and constrained, whereas the ARIMA forecasts allow for a wider range of possible outcomes, reflecting their sensitivity to recent variability.
+
+These final forecasts illustrate how each modelling approach extrapolates beyond the observed data and highlight the trade-off between forecast stability and responsiveness.
+
 
 # Evaluation
 

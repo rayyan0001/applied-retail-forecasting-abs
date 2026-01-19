@@ -72,6 +72,14 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#arima-model-comparison" id="toc-arima-model-comparison" class="nav-link" data-scroll-target="#arima-model-comparison"><span class="header-section-number">4.2.2</span> ARIMA model comparison</a></li>
   </ul></li>
   <li><a href="#test-set-evaluation-and-final-model-selection" id="toc-test-set-evaluation-and-final-model-selection" class="nav-link" data-scroll-target="#test-set-evaluation-and-final-model-selection"><span class="header-section-number">4.3</span> Test-set evaluation and final model selection</a></li>
+  <li><a href="#model-diagnostics-and-forecasting" id="toc-model-diagnostics-and-forecasting" class="nav-link" data-scroll-target="#model-diagnostics-and-forecasting"><span class="header-section-number">4.4</span> Model diagnostics and forecasting</a>
+  <ul class="collapse">
+  <li><a href="#parameter-estimates" id="toc-parameter-estimates" class="nav-link" data-scroll-target="#parameter-estimates"><span class="header-section-number">4.4.1</span> Parameter estimates</a></li>
+  <li><a href="#residual-diagnostics" id="toc-residual-diagnostics" class="nav-link" data-scroll-target="#residual-diagnostics"><span class="header-section-number">4.4.2</span> Residual diagnostics</a></li>
+  <li><a href="#forecasts-and-prediction-intervals" id="toc-forecasts-and-prediction-intervals" class="nav-link" data-scroll-target="#forecasts-and-prediction-intervals"><span class="header-section-number">4.4.3</span> Forecasts and prediction intervals</a></li>
+  <li><a href="#test-set-comparison" id="toc-test-set-comparison" class="nav-link" data-scroll-target="#test-set-comparison"><span class="header-section-number">4.4.4</span> Test-set comparison</a></li>
+  <li><a href="#final-forecasts-using-full-data" id="toc-final-forecasts-using-full-data" class="nav-link" data-scroll-target="#final-forecasts-using-full-data"><span class="header-section-number">4.4.5</span> Final forecasts using full data</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#evaluation" id="toc-evaluation" class="nav-link" data-scroll-target="#evaluation"><span class="header-section-number">5</span> Evaluation</a></li>
   </ul>
@@ -111,23 +119,23 @@ ul.task-list li input[type="checkbox"] {
 <p>The series represents turnover for furniture, floor coverings, houseware and textile goods retailing in the Northern Territory of Australia, measured in millions of Australian dollars. The data span April 1988 to December 2022 and are observed at a monthly frequency. A small sample of the dataset is shown below.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="uotncofiqh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#uotncofiqh table {
+<div id="sdxmnhboax" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#sdxmnhboax table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#uotncofiqh thead, #uotncofiqh tbody, #uotncofiqh tfoot, #uotncofiqh tr, #uotncofiqh td, #uotncofiqh th {
+#sdxmnhboax thead, #sdxmnhboax tbody, #sdxmnhboax tfoot, #sdxmnhboax tr, #sdxmnhboax td, #sdxmnhboax th {
   border-style: none;
 }
 
-#uotncofiqh p {
+#sdxmnhboax p {
   margin: 0;
   padding: 0;
 }
 
-#uotncofiqh .gt_table {
+#sdxmnhboax .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -153,12 +161,12 @@ ul.task-list li input[type="checkbox"] {
   border-left-color: #D3D3D3;
 }
 
-#uotncofiqh .gt_caption {
+#sdxmnhboax .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#uotncofiqh .gt_title {
+#sdxmnhboax .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -170,7 +178,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-width: 0;
 }
 
-#uotncofiqh .gt_subtitle {
+#sdxmnhboax .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -182,7 +190,7 @@ ul.task-list li input[type="checkbox"] {
   border-top-width: 0;
 }
 
-#uotncofiqh .gt_heading {
+#sdxmnhboax .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -194,13 +202,13 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#uotncofiqh .gt_bottom_border {
+#sdxmnhboax .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#uotncofiqh .gt_col_headings {
+#sdxmnhboax .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -215,7 +223,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#uotncofiqh .gt_col_heading {
+#sdxmnhboax .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -235,7 +243,7 @@ ul.task-list li input[type="checkbox"] {
   overflow-x: hidden;
 }
 
-#uotncofiqh .gt_column_spanner_outer {
+#sdxmnhboax .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -247,15 +255,15 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 4px;
 }
 
-#uotncofiqh .gt_column_spanner_outer:first-child {
+#sdxmnhboax .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#uotncofiqh .gt_column_spanner_outer:last-child {
+#sdxmnhboax .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#uotncofiqh .gt_column_spanner {
+#sdxmnhboax .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -267,11 +275,11 @@ ul.task-list li input[type="checkbox"] {
   width: 100%;
 }
 
-#uotncofiqh .gt_spanner_row {
+#sdxmnhboax .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#uotncofiqh .gt_group_heading {
+#sdxmnhboax .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -297,7 +305,7 @@ ul.task-list li input[type="checkbox"] {
   text-align: left;
 }
 
-#uotncofiqh .gt_empty_group_heading {
+#sdxmnhboax .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -312,15 +320,15 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 
-#uotncofiqh .gt_from_md > :first-child {
+#sdxmnhboax .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#uotncofiqh .gt_from_md > :last-child {
+#sdxmnhboax .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#uotncofiqh .gt_row {
+#sdxmnhboax .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -339,7 +347,7 @@ ul.task-list li input[type="checkbox"] {
   overflow-x: hidden;
 }
 
-#uotncofiqh .gt_stub {
+#sdxmnhboax .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -352,7 +360,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#uotncofiqh .gt_stub_row_group {
+#sdxmnhboax .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -366,15 +374,15 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: top;
 }
 
-#uotncofiqh .gt_row_group_first td {
+#sdxmnhboax .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#uotncofiqh .gt_row_group_first th {
+#sdxmnhboax .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#uotncofiqh .gt_summary_row {
+#sdxmnhboax .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -384,16 +392,16 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#uotncofiqh .gt_first_summary_row {
+#sdxmnhboax .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#uotncofiqh .gt_first_summary_row.thick {
+#sdxmnhboax .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#uotncofiqh .gt_last_summary_row {
+#sdxmnhboax .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -403,7 +411,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#uotncofiqh .gt_grand_summary_row {
+#sdxmnhboax .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -413,7 +421,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#uotncofiqh .gt_first_grand_summary_row {
+#sdxmnhboax .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -423,7 +431,7 @@ ul.task-list li input[type="checkbox"] {
   border-top-color: #D3D3D3;
 }
 
-#uotncofiqh .gt_last_grand_summary_row_top {
+#sdxmnhboax .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -433,11 +441,11 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#uotncofiqh .gt_striped {
+#sdxmnhboax .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#uotncofiqh .gt_table_body {
+#sdxmnhboax .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -446,7 +454,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#uotncofiqh .gt_footnotes {
+#sdxmnhboax .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -460,7 +468,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#uotncofiqh .gt_footnote {
+#sdxmnhboax .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -469,7 +477,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#uotncofiqh .gt_sourcenotes {
+#sdxmnhboax .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -483,7 +491,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#uotncofiqh .gt_sourcenote {
+#sdxmnhboax .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -491,72 +499,72 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#uotncofiqh .gt_left {
+#sdxmnhboax .gt_left {
   text-align: left;
 }
 
-#uotncofiqh .gt_center {
+#sdxmnhboax .gt_center {
   text-align: center;
 }
 
-#uotncofiqh .gt_right {
+#sdxmnhboax .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#uotncofiqh .gt_font_normal {
+#sdxmnhboax .gt_font_normal {
   font-weight: normal;
 }
 
-#uotncofiqh .gt_font_bold {
+#sdxmnhboax .gt_font_bold {
   font-weight: bold;
 }
 
-#uotncofiqh .gt_font_italic {
+#sdxmnhboax .gt_font_italic {
   font-style: italic;
 }
 
-#uotncofiqh .gt_super {
+#sdxmnhboax .gt_super {
   font-size: 65%;
 }
 
-#uotncofiqh .gt_footnote_marks {
+#sdxmnhboax .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#uotncofiqh .gt_asterisk {
+#sdxmnhboax .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#uotncofiqh .gt_indent_1 {
+#sdxmnhboax .gt_indent_1 {
   text-indent: 5px;
 }
 
-#uotncofiqh .gt_indent_2 {
+#sdxmnhboax .gt_indent_2 {
   text-indent: 10px;
 }
 
-#uotncofiqh .gt_indent_3 {
+#sdxmnhboax .gt_indent_3 {
   text-indent: 15px;
 }
 
-#uotncofiqh .gt_indent_4 {
+#sdxmnhboax .gt_indent_4 {
   text-indent: 20px;
 }
 
-#uotncofiqh .gt_indent_5 {
+#sdxmnhboax .gt_indent_5 {
   text-indent: 25px;
 }
 
-#uotncofiqh .katex-display {
+#sdxmnhboax .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#uotncofiqh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#sdxmnhboax div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -851,9 +859,9 @@ Figure&nbsp;8
 </div>
 </div>
 </div>
-<p>ARIMA model identification is guided by the autocorrelation and partial autocorrelation functions of the transformed and differenced series, shown in <a href="#fig-plot8" class="quarto-xref">Figure&nbsp;8</a>. One regular difference and one seasonal difference are retained, consistent with the stationarity analysis in the previous section, resulting in a baseline structure of (0,1,0)(0,1,0)12.</p>
+<p>ARIMA model identification is guided by the autocorrelation and partial autocorrelation functions of the transformed and differenced series, shown in <a href="#fig-plot8" class="quarto-xref">Figure&nbsp;8</a>. One regular difference and one seasonal difference are retained, consistent with the stationarity analysis in the previous section, resulting in a baseline structure of (0,1,0)(0,1,0)[12].</p>
 <p>Inspection of the ACF suggests the presence of a non-seasonal moving average component at lag 1, while the PACF indicates a potential non-seasonal autoregressive component at lag 2. At the seasonal level, a significant spike at lag 12 in the ACF suggests a seasonal MA(1) term, while spikes at lags 12 and 24 in the PACF indicate a possible seasonal AR(2) structure.</p>
-<p>Based on these patterns, two candidate ARIMA specifications are selected: (2,1,0)(2,1,0)_12and (2,1,0)(0,1,1)12, alongside an automatically selected ARIMA model.</p>
+<p>Based on these patterns, two candidate ARIMA specifications are selected: (2,1,0)(2,1,0)[12] and (2,1,0)(0,1,1)[12], alongside an automatically selected ARIMA model.</p>
 </section>
 </section>
 <section id="model-comparison-using-information-criteria" class="level2" data-number="4.2">
@@ -899,8 +907,9 @@ Table&nbsp;5
 </div>
 </figure>
 </div>
-<p>The candidate ETS models are fitted to the training data and compared using the Akaike Information Criterion (AIC), with results summarised in <a href="#tbl-table5" class="quarto-xref">Table&nbsp;5</a>. The automatically selected ETS model, ETS(M,A,M), achieves the lowest AIC, indicating the best in-sample fit among the specifications considered.</p>
+<p>The candidate ETS models are fitted to the training data and compared using the Akaike Information Criterion (AIC), with results summarized in <a href="#tbl-table5" class="quarto-xref">Table&nbsp;5</a>. The automatically selected ETS model, ETS(M,A,M), achieves the lowest AIC, indicating the best in-sample fit among the specifications considered.</p>
 <p>However, the damped-trend models ETS(M,Ad,A) and ETS(M,Ad,M) perform comparably in terms of AIC, with only marginally higher values. Given their damped trend structure, these models remain plausible alternatives, particularly if long-run growth is expected to slow.</p>
+<p>Note: ETS models are fitted to the original turnover series, as exponential smoothing methods natively accommodate trend and seasonality without requiring prior differencing or transformation.</p>
 </section>
 <section id="arima-model-comparison" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="arima-model-comparison"><span class="header-section-number">4.2.2</span> ARIMA model comparison</h3>
@@ -939,7 +948,7 @@ Table&nbsp;7
 </div>
 </figure>
 </div>
-<p>A similar comparison is conducted for the ARIMA candidates. The automatically selected ARIMA model matches the manually specified (2,1,0)(0,1,1)12 model, as shown in <a href="#tbl-table6" class="quarto-xref">Table&nbsp;6</a>. Both specifications achieve the lowest AIC values in <a href="#tbl-table7" class="quarto-xref">Table&nbsp;7</a>, indicating strong in-sample performance relative to the alternative candidate.</p>
+<p>A similar comparison is conducted for the ARIMA candidates. The automatically selected ARIMA model matches the manually specified (2,1,0)(0,1,1)[12] model, as shown in <a href="#tbl-table6" class="quarto-xref">Table&nbsp;6</a>. Both specifications achieve the lowest AIC values in <a href="#tbl-table7" class="quarto-xref">Table&nbsp;7</a>, indicating strong in-sample performance relative to the alternative candidate.</p>
 </section>
 </section>
 <section id="test-set-evaluation-and-final-model-selection" class="level2" data-number="4.3">
@@ -980,9 +989,181 @@ Table&nbsp;9
 </figure>
 </div>
 <p>To assess out-of-sample performance, all shortlisted ETS and ARIMA models are evaluated on a 24-month test set. Forecast accuracy metrics for ETS and ARIMA models are reported in <a href="#tbl-table8" class="quarto-xref">Table&nbsp;8</a> and <a href="#tbl-table9" class="quarto-xref">Table&nbsp;9</a>, respectively.</p>
-<p>For the ARIMA models, the (2,1,0)(0,1,1)12 specification achieves both the lowest AIC and the lowest test-set RMSE, and is also selected automatically by the ARIMA procedure. This consistency supports its selection as the preferred ARIMA model.</p>
+<p>For the ARIMA models, the (2,1,0)(0,1,1)[12] specification achieves both the lowest AIC and the lowest test-set RMSE, and is also selected automatically by the ARIMA procedure. This consistency provides strong support for its selection as the preferred ARIMA model.</p>
 <p>For the ETS models, the automatically selected ETS(M,A,M) model achieves the lowest AIC but performs less well on the test set. In contrast, ETS(M,Ad,A) delivers the lowest test-set RMSE among ETS candidates while maintaining a competitive AIC value. Given its superior out-of-sample performance and damped trend structure, ETS(M,Ad,A) is selected as the preferred ETS model.</p>
 <p>These two models are carried forward for detailed diagnostics and forecasting in the next section.</p>
+</section>
+<section id="model-diagnostics-and-forecasting" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="model-diagnostics-and-forecasting"><span class="header-section-number">4.4</span> Model diagnostics and forecasting</h2>
+<section id="parameter-estimates" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="parameter-estimates"><span class="header-section-number">4.4.1</span> Parameter estimates</h3>
+<div id="tbl-table10" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;10
+</figcaption>
+<div aria-describedby="tbl-table10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: turnover 
+Model: ETS(M,Ad,A) 
+  Smoothing parameters:
+    alpha = 0.4268619 
+    beta  = 0.0001428823 
+    gamma = 0.09580096 
+    phi   = 0.9798006 
+
+  Initial states:
+     l[0]       b[0]       s[0]      s[-1]      s[-2]     s[-3]       s[-4]
+ 1.935965 0.03466882 0.04304406 -0.3569073 -0.4652471 0.3504102 -0.06845108
+       s[-5]       s[-6]     s[-7]      s[-8]    s[-9]    s[-10]     s[-11]
+ -0.03246525 -0.06927204 0.1164343 0.01381827 0.442839 0.1834115 -0.1576145
+
+  sigma^2:  0.0076
+
+     AIC     AICc      BIC 
+1796.565 1798.394 1868.094 </code></pre>
+</div>
+</div>
+</figure>
+</div>
+<div id="tbl-table11" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;11
+</figcaption>
+<div aria-describedby="tbl-table11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: turnover 
+Model: ARIMA(2,1,0)(0,1,1)[12] 
+Transformation: box_cox(turnover, 0) 
+
+Coefficients:
+          ar1      ar2     sma1
+      -0.6228  -0.2730  -0.8564
+s.e.   0.0494   0.0496   0.0356
+
+sigma^2 estimated as 0.007082:  log likelihood=394.69
+AIC=-781.38   AICc=-781.27   BIC=-765.61</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<p>Table <a href="#tbl-table10" class="quarto-xref">Table&nbsp;10</a> reports the parameter estimates for the selected ETS(M,Ad,A) model. The level smoothing parameter (α = 0.43) indicates that the model places moderate weight on recent observations when updating the series level. The trend smoothing parameter is close to zero, consistent with the use of a damped trend that evolves slowly over time. The seasonal smoothing parameter (γ = 0.096) suggests relatively stable seasonal patterns, with only gradual updating as new data arrive. The damping parameter (ϕ = 0.98) confirms that the trend is expected to persist in the short term but gradually flatten in the long run.</p>
+<p>Parameter estimates for the selected ARIMA(2,1,0)(0,1,1)[12] model are shown in <a href="#tbl-table11" class="quarto-xref">Table&nbsp;11</a>. The negative autoregressive coefficients indicate mild mean-reverting behaviour, where deviations tend to be followed by partial corrections. The seasonal moving average term captures strong dependence at the annual lag, reflecting the importance of shocks occurring at the same time in previous years. Together, these parameters indicate a model that responds to both short-term fluctuations and seasonal structure.</p>
+</section>
+<section id="residual-diagnostics" class="level3" data-number="4.4.2">
+<h3 data-number="4.4.2" class="anchored" data-anchor-id="residual-diagnostics"><span class="header-section-number">4.4.2</span> Residual diagnostics</h3>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: `gg_tsresiduals()` was deprecated in feasts 0.4.2.
+ℹ Please use `ggtime::gg_tsresiduals()` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div id="fig-plot9" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="analysis_files/figure-html/fig-plot9-1.png" id="fig-plot9" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plot9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="tbl-table12" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;12
+</figcaption>
+<div aria-describedby="tbl-table12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .model   lb_stat lb_pvalue
+  &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+1 ETS_MAdA    58.5 0.0000212</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot10" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="analysis_files/figure-html/fig-plot10-1.png" id="fig-plot10" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plot10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="tbl-table13" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-table13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;13
+</figcaption>
+<div aria-describedby="tbl-table13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .model lb_stat lb_pvalue
+  &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+1 model2    31.3    0.0686</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<p>Residual diagnostics are used to assess whether the fitted models have adequately captured the systematic structure in the data. For the ETS model, the residual plots in <a href="#fig-plot9" class="quarto-xref">Figure&nbsp;9</a> show several autocorrelation spikes beyond the 95% confidence bounds. This is supported by the Ljung–Box test results in <a href="#tbl-table12" class="quarto-xref">Table&nbsp;12</a>, which return a very small p-value at lag 24, providing strong evidence against the residuals being white noise. While this suggests that some autocorrelation remains unmodelled, this behaviour is not uncommon for ETS models and does not necessarily preclude good forecasting performance.</p>
+<p>In contrast, the residual diagnostics for the ARIMA model in <a href="#fig-plot10" class="quarto-xref">Figure&nbsp;10</a> show no substantial autocorrelation remaining, with only a single spike marginally exceeding the confidence bounds. The Ljung–Box test in <a href="#tbl-table13" class="quarto-xref">Table&nbsp;13</a> returns a p-value of 0.069, indicating no strong evidence of residual autocorrelation. This suggests that the ARIMA model has captured the underlying dependence structure effectively and produces residuals consistent with white noise.</p>
+</section>
+<section id="forecasts-and-prediction-intervals" class="level3" data-number="4.4.3">
+<h3 data-number="4.4.3" class="anchored" data-anchor-id="forecasts-and-prediction-intervals"><span class="header-section-number">4.4.3</span> Forecasts and prediction intervals</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot11" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="analysis_files/figure-html/fig-plot11-1.png" id="fig-plot11" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plot11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Forecasts from the selected ETS and ARIMA models are shown in <a href="#fig-plot11" class="quarto-xref">Figure&nbsp;11</a>. Both models generate similar short-term forecasts and capture the recurring seasonal pattern in the data. However, differences emerge in their treatment of longer-term uncertainty.</p>
+<p>The ETS model produces smoother forecasts with relatively narrow prediction intervals, reflecting its damped trend structure and assumption of stable long-run behaviour. In contrast, the ARIMA model produces wider prediction intervals, indicating greater sensitivity to recent variability and uncertainty in future dynamics. While both forecasts are plausible, the ARIMA model reflects a higher degree of uncertainty, whereas the ETS model provides more conservative and stable projections.</p>
+</section>
+<section id="test-set-comparison" class="level3" data-number="4.4.4">
+<h3 data-number="4.4.4" class="anchored" data-anchor-id="test-set-comparison"><span class="header-section-number">4.4.4</span> Test-set comparison</h3>
+<p>Both the ETS and ARIMA models perform well on the 24-month test set, capturing the underlying seasonal structure and overall movement in retail turnover. However, differences emerge when comparing forecast accuracy and uncertainty.</p>
+<p>The ETS(M,Ad,A) model achieves the lowest RMSE on the test set, as shown in <a href="#tbl-table8" class="quarto-xref">Table&nbsp;8</a> and <a href="#tbl-table9" class="quarto-xref">Table&nbsp;9</a>, indicating superior out-of-sample accuracy. Its forecasts are smoother and more stable, reflecting the damped trend structure and assumption of gradual long-run behaviour.</p>
+<p>In contrast, the ARIMA(2,1,0)(0,1,1)[12] model achieves a slightly lower in-sample AIC and responds more strongly to recent fluctuations in the data. While this flexibility allows it to adapt quickly to changes, it also results in higher test-set RMSE and wider prediction intervals, indicating greater forecast uncertainty.</p>
+<p>Overall, the ETS model provides more stable and reliable forecasts in an out-of-sample setting, while the ARIMA model may be preferable in environments where rapid changes and short-term volatility are of primary interest.</p>
+</section>
+<section id="final-forecasts-using-full-data" class="level3" data-number="4.4.5">
+<h3 data-number="4.4.5" class="anchored" data-anchor-id="final-forecasts-using-full-data"><span class="header-section-number">4.4.5</span> Final forecasts using full data</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot12" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="analysis_files/figure-html/fig-plot12-1.png" id="fig-plot12" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plot12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>To produce final forecasts, both selected models are refitted to the full dataset using the same model structures identified earlier. Parameter estimates are re-estimated, but no changes are made to the model specifications.</p>
+<p>Figure <a href="#fig-plot12" class="quarto-xref">Figure&nbsp;12</a> shows two-year ahead forecasts from the refitted ETS and ARIMA models, along with 80% prediction intervals. Both models project a continuation of recent trends and seasonal patterns, while differing in the degree of forecast uncertainty. The ETS forecasts remain relatively smooth and constrained, whereas the ARIMA forecasts allow for a wider range of possible outcomes, reflecting their sensitivity to recent variability.</p>
+<p>These final forecasts illustrate how each modelling approach extrapolates beyond the observed data and highlight the trade-off between forecast stability and responsiveness.</p>
+</section>
 </section>
 </section>
 <section id="evaluation" class="level1" data-number="5">
