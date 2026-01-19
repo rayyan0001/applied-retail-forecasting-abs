@@ -413,9 +413,9 @@ Inspection of the ACF suggests the presence of a non-seasonal moving average com
 Based on these patterns, two candidate ARIMA specifications are selected: (2,1,0)(2,1,0)[12] and (2,1,0)(0,1,1)[12], alongside an automatically selected ARIMA model.
 
 
-## Model comparison using information criteria
+# Model comparison using information criteria
 
-### ETS model comparison
+## ETS model comparison
 
 ```{r}
 
@@ -452,7 +452,7 @@ However, the damped-trend models ETS(M,Ad,A) and ETS(M,Ad,M) perform comparably 
 
 Note: ETS models are fitted to the original turnover series, as exponential smoothing methods natively accommodate trend and seasonality without requiring prior differencing or transformation.
 
-### ARIMA model comparison
+## ARIMA model comparison
 
 ```{r}
 #| label: tbl-table6
@@ -537,9 +537,9 @@ For the ETS models, the automatically selected ETS(M,A,M) model achieves the low
 
 These two models are carried forward for detailed diagnostics and forecasting in the next section.
 
-## Model diagnostics and forecasting
+# Model diagnostics and forecasting
 
-### Parameter estimates
+## Parameter estimates
 
 ```{r}
 #| label: tbl-table10
@@ -567,7 +567,7 @@ Table @tbl-table10 reports the parameter estimates for the selected ETS(M,Ad,A) 
 Parameter estimates for the selected ARIMA(2,1,0)(0,1,1)[12] model are shown in @tbl-table11. The negative autoregressive coefficients indicate mild mean-reverting behaviour, where deviations tend to be followed by partial corrections. The seasonal moving average term captures strong dependence at the annual lag, reflecting the importance of shocks occurring at the same time in previous years. Together, these parameters indicate a model that responds to both short-term fluctuations and seasonal structure.
 
 
-### Residual diagnostics
+## Residual diagnostics
 
 
 ```{r}
@@ -618,7 +618,7 @@ Residual diagnostics are used to assess whether the fitted models have adequatel
 
 In contrast, the residual diagnostics for the ARIMA model in @fig-plot10 show no substantial autocorrelation remaining, with only a single spike marginally exceeding the confidence bounds. The Ljung–Box test in @tbl-table13 returns a p-value of 0.069, indicating no strong evidence of residual autocorrelation. This suggests that the ARIMA model has captured the underlying dependence structure effectively and produces residuals consistent with white noise.
 
-### Forecasts and prediction intervals
+## Forecasts and prediction intervals
 
 ```{r}
 #| label: fig-plot11
@@ -650,7 +650,7 @@ Forecasts from the selected ETS and ARIMA models are shown in @fig-plot11. Both 
 
 The ETS model produces smoother forecasts with relatively narrow prediction intervals, reflecting its damped trend structure and assumption of stable long-run behaviour. In contrast, the ARIMA model produces wider prediction intervals, indicating greater sensitivity to recent variability and uncertainty in future dynamics. While both forecasts are plausible, the ARIMA model reflects a higher degree of uncertainty, whereas the ETS model provides more conservative and stable projections.
 
-### Test-set comparison
+## Test-set comparison
 
 Both the ETS and ARIMA models perform well on the 24-month test set, capturing the underlying seasonal structure and overall movement in retail turnover. However, differences emerge when comparing forecast accuracy and uncertainty.
 
@@ -661,7 +661,7 @@ In contrast, the ARIMA(2,1,0)(0,1,1)[12] model achieves a slightly lower in-samp
 Overall, the ETS model provides more stable and reliable forecasts in an out-of-sample setting, while the ARIMA model may be preferable in environments where rapid changes and short-term volatility are of primary interest.
 
 
-### Final forecasts using full data
+## Final forecasts using full data
 
 ```{r}
 #| label: fig-plot12
@@ -693,6 +693,141 @@ Figure @fig-plot12 shows two-year ahead forecasts from the refitted ETS and ARIM
 
 These final forecasts illustrate how each modelling approach extrapolates beyond the observed data and highlight the trade-off between forecast stability and responsiveness.
 
+# Forecast validation using updated ABS data
 
-# Evaluation
+```{r}
+#| message: false
+#| error: false
+#| warning: false
+
+# Extracting ABS data
+abs_data <- read_abs(cat_no = "8501.0", tables = 11) |> 
+  filter(series_id == "A3349526J")
+
+```
+
+
+```{r}
+
+# Prepare the data for testing
+abs_actuals_ts  <- abs_data |> 
+  mutate(month = yearmonth(date)) |> 
+  select(month, actual_value = value) |> 
+  filter(month >= yearmonth("1988 April")) |> 
+  as_tsibble(index = month)
+
+
+# Filtering for forecasted period which was after full dataset period
+abs_actuals <- abs_actuals_ts |> 
+  filter(month >= yearmonth("2023 Jan")) |> 
+  filter(month <= yearmonth("2024 Dec"))
+
+# Extracting forecast values from Task 9
+forecast_vals <- forecast_full |> 
+  as_tibble() |> 
+  filter(month >= yearmonth("2023 Jan"), 
+         month <= yearmonth("2024 Dec")) |> 
+  select(.model, month, .mean)
+
+```
+
+
+```{r}
+#| label: tbl-table14
+
+# Join with ABS actuals
+comparison <- left_join(forecast_vals, abs_actuals, by = "month")
+
+# Computing accuracy measures 
+comparison_results <- comparison |> 
+  group_by(.model) |> 
+  summarise(
+    RMSE = rmse_vec(truth = actual_value, estimate = .mean),
+    MAE  = mae_vec(truth = actual_value, estimate = .mean),
+    MAPE = mape_vec(truth = actual_value, estimate = .mean)
+  )
+
+comparison_results
+
+```
+
+```{r}
+#| label: fig-plot13
+#| message: false
+#| error: false
+#| warning: false
+
+# Combine forecasts and actuals
+plot_data <- forecast_full |> 
+  as_tibble() |> 
+  filter(month >= yearmonth("2023 Jan"), 
+         month <= yearmonth("2024 Dec")) |> 
+  select(month, .model, .mean) |> 
+  left_join(abs_actuals, by = "month")
+
+# Plotting for comparison
+ggplot(plot_data, aes(x = month)) +
+  geom_line(aes(y = .mean, color = .model), 
+            size = 1) +
+  geom_line(aes(y = actual_value), 
+            color = "black", linetype = "dashed", size = 1) +
+  labs(title = "Forecasts vs ABS Actuals (2023–2024)",
+       y = "Turnover ($ Millions)",
+       x = "Month",
+       color = "Model") +
+  theme_bw()
+
+```
+
+To evaluate how the selected models perform in a real-world setting, updated retail turnover data are obtained from the Australian Bureau of Statistics (ABS) for the period following the end of the original sample. This allows the forecasts produced in the previous section to be compared against realised values that were not available at the time the models were estimated.
+
+Figure @fig-plot13 and the accuracy metrics reported in @tbl-table14 show that both models capture the underlying seasonal structure reasonably well over the 2023–2024 period. However, the ARIMA model consistently outperforms the ETS model across all reported measures. In particular, the ARIMA model achieves lower RMSE, MAE, and MAPE values (RMSE = 0.641 compared to 0.804 for ETS), indicating superior short-term accuracy during this period.
+
+Visually, the ARIMA forecasts track the observed ABS values more closely, especially during the first half of 2024, where the ETS model tends to underpredict turnover. This suggests that the ARIMA model is better able to adapt to recent volatility and short-term shifts in the series, whereas the ETS model produces smoother and more conservative projections.
+
+These results highlight an important trade-off observed throughout the analysis. While ETS models provide stable and reliable forecasts under relatively smooth conditions, ARIMA models may offer improved performance when the underlying dynamics of the series change more rapidly. In practice, model choice should therefore be guided by the forecasting horizon and the expected stability of the economic environment.
+
+# Model strengths, limitations, and operational use
+
+## Strengths and limitations of the selected models
+
+Both the ETS and ARIMA models demonstrate clear strengths when applied to this retail turnover series, but each also has limitations. The ETS model provides a structured and interpretable framework for modelling level, trend, and seasonality. Its forecasts are stable, smooth, and easy to communicate, making it a strong choice when consistency and interpretability are prioritised. However, this same structure can cause the model to respond slowly to sudden changes, particularly during periods of increased volatility or structural shifts.
+
+The ARIMA model, in contrast, is more reactive to recent movements in the data. This responsiveness allowed it to outperform ETS in terms of forecast accuracy when evaluated against realised ABS data for 2023–2024. That said, its forecasts are less smooth and its behaviour can be harder to interpret, especially when multiple autoregressive and moving average components interact. While ARIMA achieved better numerical accuracy in this case, neither model fully captured all short-term fluctuations in the series, reflecting the inherent noise and complexity of retail turnover data.
+
+Overall, the results highlight a key trade-off common in applied forecasting. ETS models offer clarity and stability, while ARIMA models provide flexibility and responsiveness. The “better” model depends on whether the forecasting objective prioritises interpretability or short-term accuracy.
+
+## Forecasting workflow in practice
+
+If forecasts of this series were required on a recurring annual basis, a structured and repeatable workflow would be essential. Each year would begin by updating the dataset with the latest ABS release, ensuring consistency in definitions, frequency, and transformations. The updated series would then be reviewed visually and statistically to assess changes in trend, seasonality, or variance, supported by tools such as time series plots and STL decomposition.
+
+Rather than reusing a fixed model indefinitely, the data structure would be reassessed annually. ETS and ARIMA models would be re-evaluated using information criteria, residual diagnostics, and recent out-of-sample performance to ensure the selected specification remains appropriate. Once a suitable model is identified, it would be refitted to the full, updated dataset and used to generate forecasts for the following 12 to 24 months, accompanied by 80% and 95% prediction intervals to communicate uncertainty.
+
+Finally, forecast accuracy would be monitored by comparing previous forecasts to realised outcomes using metrics such as RMSE or MAPE. Persistent deterioration in performance would trigger a more thorough reassessment of the modelling approach, while still maintaining a consistent and interpretable forecasting framework. This process balances methodological discipline with flexibility, allowing forecasts to remain relevant as economic conditions evolve.
+
+# References
+
+Hyndman, R. J., & Athanasopoulos, G. (2021). Forecasting: Principles and practice (3rd ed.). OTexts. [https://otexts.com/fpp3/](https://otexts.com/fpp3/)
+
+Hadley Wickham, Mara Averick, Jennifer Bryan, Winston Chang, Lucy D’Agostino McGowan, Romain François, Garrett Grolemund, et al. (2019).
+Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686. [https://cran.r-project.org/web/packages/tidyverse](https://cran.r-project.org/web/packages/tidyverse)
+
+Rob J Hyndman, Earo Wang (2020).
+fpp3: Data for “Forecasting: Principles and Practice” (3rd edition) [R package]. [https://CRAN.R-project.org/package=fpp3](https://CRAN.R-project.org/package=fpp3)
+
+Sam Firke (2023).
+janitor: Simple tools for examining and cleaning dirty data [R package]. [https://CRAN.R-project.org/package=janitor](https://CRAN.R-project.org/package=janitor)
+
+Garrett Grolemund, Hadley Wickham (2011).
+Dates and times made easy with lubridate. Journal of Statistical Software, 40(3), 1–25. [https://cran.r-project.org/web/packages/lubridate](https://cran.r-project.org/web/packages/lubridate)
+
+Thomas Lin Pedersen (2023).
+patchwork: The Composer of Plots [R package]. [https://CRAN.R-project.org/package=patchwork](https://CRAN.R-project.org/package=patchwork)
+
+Matt Cowgill (2024).
+readabs: Download and Tidy Time Series Data from the Australian Bureau of Statistics (ABS) [R package]. [https://CRAN.R-project.org/package=readabs](https://CRAN.R-project.org/package=readabs)
+
+Max Kuhn, Davis Vaughan, Romain François, Daniel Falbel, and Jeroen Ooms (2023).
+yardstick: Tidy Characterizations of Model Performance [R package]. [https://CRAN.R-project.org/package=yardstick](https://CRAN.R-project.org/package=yardstick)
+
 
