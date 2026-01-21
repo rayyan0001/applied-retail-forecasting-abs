@@ -22,9 +22,7 @@ The goal of this project is not only to produce forecasts, but to demonstrate a 
 
 # Data
 
-This analysis uses monthly retail turnover data from the Australian Bureau of Statistics (ABS), Retail Trade, Table 11.
-
-The series represents turnover for furniture, floor coverings, houseware and textile goods retailing in the Northern Territory of Australia, measured in millions of Australian dollars. The data span April 1988 to December 2022 and are observed at a monthly frequency. A small sample of the dataset is shown below.
+The analysis uses monthly retail turnover data from the Australian Bureau of Statistics (ABS) Retail Trade release (Table 11). The series corresponds to furniture, floor coverings, houseware and textile goods retailing in the Northern Territory, measured in AUD millions, spanning April 1988 to December 2022. A sample of observations is shown below.
 
 ```{r}
 #| label: load-libraries
@@ -105,7 +103,7 @@ gt(head(retail_clean))
 ```
 
 
-# Exploratory Data Analaysis (EDA)
+# Exploratory Data Analysis (EDA)
 
 Exploratory analysis is used to understand the overall structure of the retail turnover series before any modeling is performed. This includes examining long-term trends, seasonal patterns, and changes in variability over time, as well as identifying potential structural breaks linked to broader economic conditions.
 
@@ -165,8 +163,6 @@ retail_clean |> gg_subseries(turnover) +
 
 ```
 
-
-The dataset captures monthly retail turnover for furniture, floor coverings, houseware and textile goods retailing in the Northern Territory, spanning April 1988 to December 2022.
 
 The time series plot in @fig-plot1 shows a clear upward long-term trend, indicating sustained growth in retail turnover over the sample period. Seasonal behaviour is also evident, with fluctuations that increase in magnitude as the level of the series rises, suggesting multiplicative seasonality. A pronounced increase in turnover is observed between approximately 2007 and 2009, which likely reflects the effects of the Northern Territory mining boom during that period. Following this, turnover declines sharply post-2010, potentially linked to the global financial crisis and the subsequent slowdown in mining-related economic activity.
 
@@ -233,7 +229,7 @@ bct_plot1 + bct_plot2
 To stabilize the variance of the series and address heteroskedasticity, a Box–Cox transformation is applied to the retail turnover data. The transformation parameter 
 λ is selected using the Guerrero method, which chooses the value that minimizes variability across seasonal subseries. Applying this procedure yields an estimated λ value of 0.242.
 
-Figure @fig-plot4 compares the Box–Cox transformation using the Guerrero-estimated value with a log transformation, corresponding to λ = 0. Both transformations reduce variance instability relative to the original series; however, the log-transformed series exhibits slightly tighter peaks and troughs, indicating more consistent variance across seasonal periods. The estimated value being close to zero suggests that a log transformation is sufficient in practice.
+@fig-plot4 compares the Box–Cox transformation using the Guerrero-estimated value with a log transformation, corresponding to λ = 0. Both transformations reduce variance instability relative to the original series; however, the log-transformed series exhibits slightly tighter peaks and troughs, indicating more consistent variance across seasonal periods. The estimated value being close to zero suggests that a log transformation is sufficient in practice.
 
 Overall, comparison with the original series in @fig-plot1 indicates that the transformation is effective in achieving approximate variance stability, making the data more suitable for subsequent decomposition and time series modelling.
 
@@ -450,12 +446,13 @@ The candidate ETS models are fitted to the training data and compared using the 
 
 However, the damped-trend models ETS(M,Ad,A) and ETS(M,Ad,M) perform comparably in terms of AIC, with only marginally higher values. Given their damped trend structure, these models remain plausible alternatives, particularly if long-run growth is expected to slow.
 
-Note: ETS models are fitted to the original turnover series, as exponential smoothing methods natively accommodate trend and seasonality without requiring prior differencing or transformation.
+**Note: ETS models are fitted to the original turnover series, as exponential smoothing methods natively accommodate trend and seasonality without requiring prior differencing or transformation.**
 
 ## ARIMA model comparison
 
 ```{r}
 #| label: tbl-table6
+#| cache: true
 
 # Modelling the selected models and the auto selected ARIMA model
 # Using stepwise and approximation = false to allow the function
@@ -562,7 +559,7 @@ arima_models |>
 ```
 
 
-Table @tbl-table10 reports the parameter estimates for the selected ETS(M,Ad,A) model. The level smoothing parameter (α = 0.43) indicates that the model places moderate weight on recent observations when updating the series level. The trend smoothing parameter is close to zero, consistent with the use of a damped trend that evolves slowly over time. The seasonal smoothing parameter (γ = 0.096) suggests relatively stable seasonal patterns, with only gradual updating as new data arrive. The damping parameter (ϕ = 0.98) confirms that the trend is expected to persist in the short term but gradually flatten in the long run.
+@tbl-table10 reports the parameter estimates for the selected ETS(M,Ad,A) model. The level smoothing parameter (α = 0.43) indicates that the model places moderate weight on recent observations when updating the series level. The trend smoothing parameter is close to zero, consistent with the use of a damped trend that evolves slowly over time. The seasonal smoothing parameter (γ = 0.096) suggests relatively stable seasonal patterns, with only gradual updating as new data arrive. The damping parameter (ϕ = 0.98) confirms that the trend is expected to persist in the short term but gradually flatten in the long run.
 
 Parameter estimates for the selected ARIMA(2,1,0)(0,1,1)[12] model are shown in @tbl-table11. The negative autoregressive coefficients indicate mild mean-reverting behaviour, where deviations tend to be followed by partial corrections. The seasonal moving average term captures strong dependence at the annual lag, reflecting the importance of shocks occurring at the same time in previous years. Together, these parameters indicate a model that responds to both short-term fluctuations and seasonal structure.
 
@@ -572,6 +569,7 @@ Parameter estimates for the selected ARIMA(2,1,0)(0,1,1)[12] model are shown in 
 
 ```{r}
 #| label: fig-plot9
+#| warning: false
 
 # ETS residual diagnostics
 ets_models |> 
@@ -781,7 +779,7 @@ ggplot(plot_data, aes(x = month)) +
 
 To evaluate how the selected models perform in a real-world setting, updated retail turnover data are obtained from the Australian Bureau of Statistics (ABS) for the period following the end of the original sample. This allows the forecasts produced in the previous section to be compared against realised values that were not available at the time the models were estimated.
 
-Figure @fig-plot13 and the accuracy metrics reported in @tbl-table14 show that both models capture the underlying seasonal structure reasonably well over the 2023–2024 period. However, the ARIMA model consistently outperforms the ETS model across all reported measures. In particular, the ARIMA model achieves lower RMSE, MAE, and MAPE values (RMSE = 0.641 compared to 0.804 for ETS), indicating superior short-term accuracy during this period.
+@fig-plot13 and the accuracy metrics reported in @tbl-table14 show that both models capture the underlying seasonal structure reasonably well over the 2023–2024 period. However, the ARIMA model consistently outperforms the ETS model across all reported measures. In particular, the ARIMA model achieves lower RMSE, MAE, and MAPE values (RMSE = 0.641 compared to 0.804 for ETS), indicating superior short-term accuracy during this period.
 
 Visually, the ARIMA forecasts track the observed ABS values more closely, especially during the first half of 2024, where the ETS model tends to underpredict turnover. This suggests that the ARIMA model is better able to adapt to recent volatility and short-term shifts in the series, whereas the ETS model produces smoother and more conservative projections.
 
@@ -829,5 +827,4 @@ readabs: Download and Tidy Time Series Data from the Australian Bureau of Statis
 
 Max Kuhn, Davis Vaughan, Romain François, Daniel Falbel, and Jeroen Ooms (2023).
 yardstick: Tidy Characterizations of Model Performance [R package]. [https://CRAN.R-project.org/package=yardstick](https://CRAN.R-project.org/package=yardstick)
-
 
