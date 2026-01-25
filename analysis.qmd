@@ -12,13 +12,30 @@ execute:
 
 # Overview
 
-This project applies classical time series forecasting techniques to Australian retail turnover data, with a focus on furniture and household goods retailing in the Northern Territory of Australia. Using monthly data published by the Australian Bureau of Statistics, the analysis aims to understand the underlying structure of the series and assess how different forecasting approaches perform in practice.
 
-The workflow follows a standard applied forecasting process. The data are first explored to identify trends, seasonality, and structural changes, including the impact of major economic events such as COVID-19. Variance-stabilising transformations and decomposition techniques are then used to better understand the series before fitting and evaluating models.
+## Forecasting in Practice
 
-Two model families are considered: Exponential Smoothing State Space (ETS) models and Seasonal ARIMA models. Model selection is guided by a combination of information criteria, residual diagnostics, and out-of-sample performance using a 24-month test set. Forecast accuracy is further assessed by comparing model predictions to subsequently released ABS data.
+Forecasting is the practice of using historical data to make informed estimates about the future. In real-world settings, forecasts are rarely about predicting a single “correct” number. Instead, they are about understanding uncertainty, recognizing patterns such as trend and seasonality, and making reasonable assumptions about how those patterns might evolve over time.
 
-The goal of this project is not only to produce forecasts, but to demonstrate a transparent and defensible forecasting workflow, highlighting the trade-offs between model interpretability, stability, and responsiveness when applied to real-world economic data.
+Because economic and business data are influenced by structural changes, shocks, and human behaviour, no forecasting model is perfect. Different modelling approaches can produce very different forecasts, each with its own strengths, limitations, and assumptions. This makes forecasting less about finding the best model, and more about choosing an approach that is fit for purpose.
+
+## Project Overview and Objectives
+
+This project applies classical time series forecasting techniques to Australian retail turnover data, focusing on furniture and household goods retailing in the Northern Territory. Using monthly data published by the Australian Bureau of Statistics (ABS), the analysis examines the underlying structure of the series and evaluates how different forecasting approaches perform when applied in practice.
+
+The workflow follows a standard applied forecasting process. The data are first explored to identify trends, seasonality, and structural changes, including the impact of major economic events such as COVID-19. Variance-stabilising transformations and decomposition techniques are then used to better understand the data before fitting and evaluating candidate models.
+
+Two model families are considered: Exponential Smoothing State Space (ETS) models and Seasonal ARIMA models. Model selection is guided by a combination of information criteria, residual diagnostics, and out-of-sample performance using a 24-month test set. Forecast performance is further assessed by comparing model predictions to subsequently released ABS data, allowing the forecasts to be evaluated against realised outcomes.
+
+The objective of this project is not only to generate forecasts, but to demonstrate a transparent and defensible forecasting workflow. In particular, the analysis highlights the trade-offs between model interpretability, stability, and responsiveness when forecasting real-world economic data.
+
+# Executive Summary
+
+This project explores how different time series forecasting approaches behave when applied to real-world economic data, using Australian retail turnover figures for furniture and household goods in the Northern Territory. Rather than focusing on producing a single “best” forecast, the analysis compares Exponential Smoothing (ETS) and Seasonal ARIMA models to understand how their assumptions affect stability, responsiveness, and accuracy.
+
+The workflow follows a standard applied forecasting process, beginning with exploratory analysis to identify trend, seasonality, and structural changes, including the impact of COVID-19. After stabilising variance and preparing the series for modelling, ETS and ARIMA models are developed and evaluated using information criteria, residual diagnostics, and a 24-month test set. Forecasts are then assessed against newly released ABS data for 2023–2024.
+
+Results highlight a clear trade-off. ETS models produced smoother and more stable forecasts and performed well on the held-out test set, while ARIMA models were more responsive to recent changes and tracked realised outcomes more closely when validated against updated data. In practice, this suggests that model choice depends less on finding a single “correct” approach and more on whether the forecasting task prioritises interpretability and stability or short-term accuracy and adaptability.
 
 # Data
 
@@ -687,7 +704,7 @@ autoplot(retail_clean, turnover) +
 
 To produce final forecasts, both selected models are refitted to the full dataset using the same model structures identified earlier. Parameter estimates are re-estimated, but no changes are made to the model specifications.
 
-Figure @fig-plot12 shows two-year ahead forecasts from the refitted ETS and ARIMA models, along with 80% prediction intervals. Both models project a continuation of recent trends and seasonal patterns, while differing in the degree of forecast uncertainty. The ETS forecasts remain relatively smooth and constrained, whereas the ARIMA forecasts allow for a wider range of possible outcomes, reflecting their sensitivity to recent variability.
+@fig-plot12 shows two-year ahead forecasts from the refitted ETS and ARIMA models, along with 80% prediction intervals. Both models project a continuation of recent trends and seasonal patterns, while differing in the degree of forecast uncertainty. The ETS forecasts remain relatively smooth and constrained, whereas the ARIMA forecasts allow for a wider range of possible outcomes, reflecting their sensitivity to recent variability.
 
 These final forecasts illustrate how each modelling approach extrapolates beyond the observed data and highlight the trade-off between forecast stability and responsiveness.
 
